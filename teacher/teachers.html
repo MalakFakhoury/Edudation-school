@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teachers | Education CMS</title>
+  <link rel="stylesheet" href="../login/style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="page__header">
+      <h1>Teachers Dashboard</h1>
+      <a class="link" href="../login/index.html">Logout</a>
+    </header>
+
+    <section class="page__content">
+      <div class="empty">
+        <h2>Teachers page (empty for now)</h2>
+        <p>Next step: teacher tools (classes, attendance, grades...).</p>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .page{ padding: 32px; }
+    .page__header{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 18px 20px;
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+    }
+    .page__header h1{ margin:0; font-size: 20px; }
+    .page__content{ margin-top: 18px; }
+    .empty{
+      border:1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      background: rgba(255,255,255,.03);
+    }
+    .empty h2{ margin:0 0 6px; font-size: 18px; }
+    .empty p{ margin:0; color: var(--muted); }
+  </style>
+</body>
+</html>

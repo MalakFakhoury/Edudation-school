@@ -1,0 +1,154 @@
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Education CMS | Login</title>
+  <link rel="stylesheet" href="../login/style.css" />
+</head>
+<body>
+  <main class="auth">
+    <section class="auth__left">
+      <div class="brand">
+        <div class="brand__logo">EDU</div>
+        <h1 class="brand__title">Education CMS</h1>
+        <p class="brand__subtitle">Manage courses, students, and teachers in one place.</p>
+      </div>
+
+      <div class="auth__hint">
+        <div class="pill">Secure</div>
+        <div class="pill">Fast</div>
+        <div class="pill">Simple</div>
+      </div>
+    </section>
+
+    <section class="auth__right">
+      <div class="card">
+        <div class="card__header">
+          <h2>Sign in</h2>
+          <p>Enter your User ID and password to continue.</p>
+        </div>
+
+        <form id="loginForm" class="form" novalidate>
+          <div class="field">
+            <label for="userId">User ID</label>
+            <input id="userId" name="userId" type="text" placeholder="e.g. a1023 or t204" autocomplete="username" />
+            <small class="helper" id="userIdHelp"></small>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="password">
+              <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+              <button type="button" class="password__toggle" id="togglePassword" aria-label="Show password">
+                👁
+              </button>
+            </div>
+            <small class="helper" id="passwordHelp"></small>
+          </div>
+
+          <div class="row">
+            <label class="check">
+              <input type="checkbox" />
+              <span>Remember me</span>
+            </label>
+            <a class="link" href="#" onclick="return false;">Forgot password?</a>
+          </div>
+
+          <div class="alert" id="alert" role="alert" aria-live="polite"></div>
+
+          <button class="btn" type="submit" id="loginBtn">Login</button>
+
+          <p class="footer-text">
+            Need help? <a class="link" href="#" onclick="return false;">Contact support</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const userIdInput = document.getElementById("userId");
+    const passwordInput = document.getElementById("password");
+    const alertBox = document.getElementById("alert");
+    const loginBtn = document.getElementById("loginBtn");
+
+    const userIdHelp = document.getElementById("userIdHelp");
+    const passwordHelp = document.getElementById("passwordHelp");
+
+    const togglePassword = document.getElementById("togglePassword");
+    togglePassword.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePassword.textContent = isPassword ? "🙈" : "👁";
+      togglePassword.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+    });
+
+    function setError(input, helpEl, message) {
+      input.classList.add("input--error");
+      helpEl.textContent = message;
+    }
+
+    function clearError(input, helpEl) {
+      input.classList.remove("input--error");
+      helpEl.textContent = "";
+    }
+
+    function showAlert(message) {
+      alertBox.textContent = message;
+      alertBox.classList.add("alert--show");
+    }
+
+    function clearAlert() {
+      alertBox.textContent = "";
+      alertBox.classList.remove("alert--show");
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      clearAlert();
+
+      const userId = userIdInput.value.trim();
+      const password = passwordInput.value;
+
+      let ok = true;
+
+      if (!userId) {
+        setError(userIdInput, userIdHelp, "User ID is required.");
+        ok = false;
+      } else {
+        clearError(userIdInput, userIdHelp);
+      }
+
+      if (!password) {
+        setError(passwordInput, passwordHelp, "Password is required.");
+        ok = false;
+      } else {
+        clearError(passwordInput, passwordHelp);
+      }
+
+      if (!ok) return;
+
+      // Optional: simulate loading state
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Logging in...";
+
+      const firstChar = userId.charAt(0).toLowerCase();
+
+      setTimeout(() => {
+        if (firstChar === "t") {
+          window.location.href = "teachers.html";
+        } else if (firstChar === "a") {
+          window.location.href = "admin.html";
+        } else {
+          showAlert("Invalid user type. Use an ID starting with 'A' (Admin) or 'T' (Teacher).");
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Login";
+        }
+      }, 450);
+    });
+
+    // nice UX: clear error when typing
+    userIdInput.addEventListener("input", () => clearError(userIdInput, userIdHelp));
+    passwordInput.addEventListener("input", () => clearError(passwordInput, passwordHelp));
+  </script>
+</body>
+</html>
