@@ -1,47 +1,7 @@
-:root{
-  /* Palette */
-  --primary: #504E76;
-  --primary-light: #C4C3E3;
-
-  --background: #FDF8E2;
-  --card: #FFFFFF;
-
-  --green: #A3B565;
-
-  --orange-light: #FCDD9D;
-  --orange: #F1642E;
-
-  /* Neutrals */
-  --text: #2b2b2b;
-  --muted: #6b6b6b;
-
-  --border: #e5e2c9;
-
-  /* UI tokens */
-  --radius: 16px;
-  --shadow: 0 16px 40px rgba(80, 78, 118, 0.14);
-  --font: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
-  /* Helpers */
-  --primary2: #504E76; /* used in links */
-  --danger: #F1642E;   /* using orange as danger/action */
-}
-
-*{ box-sizing: border-box; }
-
-body{
-  margin:0;
-  font-family: var(--font);
-  color: var(--text);
-  background: var(--background);
-  min-height: 100vh;
-
-  /* soft light gradients */
-  background:
-    radial-gradient(900px 600px at 15% 10%, rgba(196,195,227,.55), transparent 60%),
-    radial-gradient(800px 550px at 90% 25%, rgba(252,221,157,.55), transparent 60%),
-    linear-gradient(180deg, rgba(253,248,226,1), rgba(253,248,226,.92));
-}
+/* =========================
+   LOGIN ONLY (keep original classes)
+   uses variables from main.css
+   ========================= */
 
 /* Layout */
 .auth{
@@ -58,6 +18,14 @@ body{
   gap: 32px;
 }
 
+.auth__right{
+  padding: 64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Branding */
 .brand__logo{
   width: 52px;
   height: 52px;
@@ -100,13 +68,6 @@ body{
   background: rgba(255,255,255,.65);
 }
 
-.auth__right{
-  padding: 64px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
 /* Card */
 .card{
   width: 100%;
@@ -131,7 +92,12 @@ body{
   font-size: 14px;
 }
 
-.form{ display:flex; flex-direction: column; gap: 14px; }
+/* Form */
+.form{
+  display:flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 .field label{
   display:block;
@@ -140,8 +106,11 @@ body{
   margin-bottom: 8px;
 }
 
-/* Inputs */
-input{
+/* Inputs (ONLY inside auth form to avoid global conflicts) */
+.auth input[type="text"],
+.auth input[type="password"],
+.auth input[type="email"],
+.auth input[type="number"]{
   width:100%;
   height: 44px;
   padding: 0 12px;
@@ -153,11 +122,11 @@ input{
   transition: border .15s ease, box-shadow .15s ease, transform .05s ease;
 }
 
-input::placeholder{
+.auth input::placeholder{
   color: rgba(107,107,107,.75);
 }
 
-input:focus{
+.auth input:focus{
   border-color: rgba(80,78,118,.55);
   box-shadow: 0 0 0 4px rgba(196,195,227,.55);
 }
@@ -219,7 +188,11 @@ input:focus{
   font-size: 13px;
 }
 
-.check input{ width:auto; height:auto; }
+/* checkbox sizing fix */
+.check input{
+  width:auto;
+  height:auto;
+}
 
 /* Links */
 .link{
@@ -227,7 +200,6 @@ input:focus{
   text-decoration: none;
   font-size: 13px;
 }
-
 .link:hover{ text-decoration: underline; }
 
 /* Alert */
@@ -240,12 +212,12 @@ input:focus{
   color: #7a2d12;
   font-size: 13px;
 }
-
 .alert--show{ display:block; }
 
-/* Button */
-.btn{
+/* Button (ONLY inside auth to avoid global conflicts) */
+.auth .btn{
   height: 46px;
+  width: 100%;
   border-radius: 12px;
   border: 1px solid rgba(80,78,118,.25);
   background: linear-gradient(180deg, rgba(80,78,118,1), rgba(80,78,118,.88));
@@ -254,10 +226,9 @@ input:focus{
   cursor: pointer;
   transition: transform .05s ease, filter .15s ease;
 }
-
-.btn:hover{ filter: brightness(1.04); }
-.btn:active{ transform: scale(.99); }
-.btn:disabled{ opacity: .7; cursor: not-allowed; }
+.auth .btn:hover{ filter: brightness(1.04); }
+.auth .btn:active{ transform: scale(.99); }
+.auth .btn:disabled{ opacity: .7; cursor: not-allowed; }
 
 /* Footer */
 .footer-text{
@@ -267,14 +238,7 @@ input:focus{
   text-align: center;
 }
 
-/* Responsive */
-@media (max-width: 900px){
-  .auth{ grid-template-columns: 1fr; }
-  .auth__left{ display:none; }
-  .auth__right{ padding: 32px; }
-}
-
-
+/* Logo helpers */
 .login-logo{
   display:flex;
   justify-content:center;
@@ -285,9 +249,15 @@ input:focus{
   width: auto;
   object-fit: contain;
 }
-
 .brand__logo-img img{
   height: 56px;
   width: auto;
   object-fit: contain;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .auth{ grid-template-columns: 1fr; }
+  .auth__left{ display:none; }
+  .auth__right{ padding: 32px; }
 }

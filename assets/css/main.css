@@ -1,0 +1,52 @@
+:root{
+  /* Palette */
+  --primary: #504E76;
+  --primary-light: #C4C3E3;
+
+  --background: #FDF8E2;
+  --card: #FFFFFF;
+
+  --green: #A3B565;
+
+  --orange-light: #FCDD9D;
+  --orange: #F1642E;
+
+  /* Neutrals */
+  --text: #2b2b2b;
+  --muted: #6b6b6b;
+
+  --border: #e5e2c9;
+
+  /* UI tokens */
+  --radius: 16px;
+  --shadow: 0 16px 40px rgba(80, 78, 118, 0.14);
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* Helpers */
+  --primary2: #504E76;
+  --danger: #F1642E;
+}
+
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+
+body{
+  margin:0;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--background);
+  min-height: 100vh;
+
+  background:
+    radial-gradient(900px 600px at 15% 10%, rgba(196,195,227,.55), transparent 60%),
+    radial-gradient(800px 550px at 90% 25%, rgba(252,221,157,.55), transparent 60%),
+    linear-gradient(180deg, rgba(253,248,226,1), rgba(253,248,226,.92));
+}
+
+img{ max-width: 100%; display:block; }
+
+a{
+  color: var(--primary2);
+  text-decoration: none;
+}
+a:hover{ text-decoration: underline; }
