@@ -253,3 +253,31 @@
   }
 
 }
+.t-brand{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.t-brand img{
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+.t-brand span{
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.t-avatar-img{
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  background: white;
+}

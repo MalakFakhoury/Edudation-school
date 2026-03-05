@@ -273,3 +273,21 @@ input:focus{
   .auth__left{ display:none; }
   .auth__right{ padding: 32px; }
 }
+
+
+.login-logo{
+  display:flex;
+  justify-content:center;
+  margin-bottom: 10px;
+}
+.login-logo img{
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand__logo-img img{
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+}
