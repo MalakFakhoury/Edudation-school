@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Students</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <aside class="a-sidebar">
+      <div class="a-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo">
+        <span>eSchool</span>
+      </div>
+
+      <div class="a-profile">
+        <img class="a-avatar" src="../assets/Images/default_profile.avif" alt="Profile">
+        <div>
+          <div class="a-name">Admin Name</div>
+          <div class="a-sub">Administrator</div>
+        </div>
+      </div>
+
+      <nav class="a-nav">
+        <a class="a-nav__item" href="./index.html">Dashboard</a>
+
+        <div class="a-nav__label">Users</div>
+        <a class="a-nav__item active" href="./students.html">Students</a>
+        <a class="a-nav__item" href="./teachers.html">Teachers</a>
+        <a class="a-nav__item" href="./parents.html">Parents</a>
+        <a class="a-nav__item" href="./admins.html">Admins</a>
+
+        <div class="a-nav__label">Academics</div>
+        <a class="a-nav__item" href="./levels.html">Levels</a>
+        <a class="a-nav__item" href="./courses.html">Courses</a>
+        <a class="a-nav__item" href="./classes.html">Classes</a>
+        <a class="a-nav__item" href="./sections.html">Sections</a>
+        <a class="a-nav__item" href="./terms.html">Terms</a>
+
+        <div class="a-nav__sep"></div>
+        <a class="a-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Students</h1>
+          <p class="a-desc">Manage student records and review available information.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshStudentsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addStudentBtn">+ Add Student</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="studentSearch"
+            class="a-search"
+            placeholder="Search by hash, name, or email"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Student Hash</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Level</th>
+                <th>Class</th>
+                <th>Parent</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <tr>
+                <td colspan="8" class="a-table-empty">Loading students...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="./admin.js"></script>
+</body>
+</html>

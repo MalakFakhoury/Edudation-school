@@ -208,3 +208,116 @@
   .a-stats{ grid-template-columns: 1fr; }
   .a-grid{ grid-template-columns: 1fr; }
 }
+
+/* Students page tools */
+.a-page-tools{
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.a-search-wrap{
+  width: 100%;
+  max-width: 360px;
+}
+
+.a-search{
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.95);
+  color: var(--text);
+  outline: none;
+  font-family: var(--font);
+}
+
+.a-search:focus{
+  border-color: rgba(80,78,118,.45);
+  box-shadow: 0 0 0 4px rgba(196,195,227,.35);
+}
+
+/* Table card */
+.a-table-card{
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 10px 22px rgba(80,78,118,.07);
+  overflow: hidden;
+}
+
+.a-table-wrap{
+  width: 100%;
+  overflow-x: auto;
+}
+
+.a-table{
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+}
+
+.a-table th,
+.a-table td{
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.a-table th{
+  background: rgba(196,195,227,.22);
+  color: var(--primary);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.a-table td{
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.a-table tbody tr:hover{
+  background: rgba(196,195,227,.10);
+}
+
+.a-table-empty{
+  text-align: center !important;
+  color: var(--muted) !important;
+  padding: 24px !important;
+}
+
+.a-table-actions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.a-action-btn{
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.a-action-btn:hover{
+  background: rgba(196,195,227,.28);
+}
+
+.a-action-btn--danger{
+  color: var(--orange);
+  border-color: rgba(241,100,46,.25);
+}
+
+.a-action-btn--danger:hover{
+  background: rgba(241,100,46,.08);
+}
