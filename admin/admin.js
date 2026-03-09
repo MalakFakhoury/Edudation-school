@@ -518,3 +518,137 @@ if (teachersTableBody) {
     });
   }
 }
+
+// =========================
+// Parents Page
+// =========================
+
+const parentsTableBody = document.getElementById("parentsTableBody");
+const parentSearch = document.getElementById("parentSearch");
+const refreshParentsBtn = document.getElementById("refreshParentsBtn");
+const addParentBtn = document.getElementById("addParentBtn");
+
+let parentsData = [];
+
+const mockParents = [
+  {
+    parent_hash: "PAR_001",
+    name: "Mohammad Ali",
+    email: "m.ali@example.com",
+    phone: "03 888 111",
+    created_at: "2026-03-01"
+  },
+  {
+    parent_hash: "PAR_002",
+    name: "Fatima Hassan",
+    email: "fatima@example.com",
+    phone: "70 222 333",
+    created_at: "2026-03-04"
+  }
+];
+
+function renderParents(data) {
+  if (!parentsTableBody) return;
+
+  if (!data || data.length === 0) {
+    parentsTableBody.innerHTML = `
+      <tr>
+        <td colspan="6" class="a-table-empty">No parents found.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  parentsTableBody.innerHTML = data.map((parent) => `
+    <tr>
+      <td>${formatValue(parent.parent_hash)}</td>
+      <td>${formatValue(parent.name)}</td>
+      <td>${formatValue(parent.email)}</td>
+      <td>${formatValue(parent.phone)}</td>
+      <td>${formatValue(parent.created_at)}</td>
+      <td>
+        <div class="a-table-actions">
+          <button class="a-action-btn">View</button>
+          <button class="a-action-btn">Edit</button>
+          <button class="a-action-btn a-action-btn--danger">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function fetchParents() {
+
+  if (!parentsTableBody) return;
+
+  parentsTableBody.innerHTML = `
+    <tr>
+      <td colspan="6" class="a-table-empty">Loading parents...</td>
+    </tr>
+  `;
+
+  try {
+
+    const token = typeof getToken === "function"
+      ? getToken()
+      : localStorage.getItem("token");
+
+    const response = await apiRequest("/get_parents", "GET", null, token);
+
+    if (Array.isArray(response) && response.length > 0) {
+
+      parentsData = response.map((parent) => ({
+        parent_hash: parent.parent_hash || "Unknown",
+        name: parent.name || "Unknown",
+        email: parent.email || "Unknown",
+        phone: parent.phone || "Unknown",
+        created_at: parent.created_at || "Unknown"
+      }));
+
+    } else {
+
+      parentsData = mockParents;
+
+    }
+
+    renderParents(parentsData);
+
+  } catch (error) {
+
+    console.error("Error fetching parents:", error);
+
+    parentsData = mockParents;
+
+    renderParents(parentsData);
+
+  }
+
+}
+
+function filterParents() {
+
+  if (!parentSearch) return;
+
+  const query = parentSearch.value.trim().toLowerCase();
+
+  const filtered = parentsData.filter((parent) =>
+    String(parent.parent_hash).toLowerCase().includes(query) ||
+    String(parent.name).toLowerCase().includes(query) ||
+    String(parent.email).toLowerCase().includes(query)
+  );
+
+  renderParents(filtered);
+
+}
+
+if (parentsTableBody) {
+
+  fetchParents();
+
+  if (parentSearch)
+    parentSearch.addEventListener("input", filterParents);
+
+  if (refreshParentsBtn)
+    refreshParentsBtn.addEventListener("click", fetchParents);
+
+}
