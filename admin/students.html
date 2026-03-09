@@ -94,7 +94,113 @@
       </section>
     </main>
   </div>
+<!-- Student View Modal -->
+<div class="a-modal" id="studentViewModal">
+  <div class="a-modal__backdrop" id="studentModalBackdrop"></div>
 
+  <div class="a-modal__content">
+    <div class="a-modal__header">
+      <h2>Student Details</h2>
+      <button class="a-modal__close" type="button" id="closeStudentModalBtn">×</button>
+    </div>
+
+    <div class="a-modal__body">
+      <div class="a-detail-grid">
+        <div class="a-detail-item">
+          <span class="a-detail-label">Student Hash</span>
+          <span class="a-detail-value" id="detailStudentHash">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Name</span>
+          <span class="a-detail-value" id="detailStudentName">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Email</span>
+          <span class="a-detail-value" id="detailStudentEmail">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Level</span>
+          <span class="a-detail-value" id="detailStudentLevel">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Class</span>
+          <span class="a-detail-value" id="detailStudentClass">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Parent</span>
+          <span class="a-detail-value" id="detailStudentParent">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Created At</span>
+          <span class="a-detail-value" id="detailStudentCreatedAt">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Add Student Modal -->
+<div class="a-modal" id="addStudentModal">
+
+  <div class="a-modal__backdrop" id="addStudentBackdrop"></div>
+
+  <div class="a-modal__content">
+
+    <div class="a-modal__header">
+      <h2 id="studentFormTitle">Add Student</h2>
+      <button class="a-modal__close" type="button" id="closeAddStudentBtn">×</button>
+    </div>
+
+    <div class="a-modal__body">
+
+      <form id="addStudentForm" class="a-form">
+
+        <div class="a-form-row">
+          <label>Student Hash</label>
+          <input type="text" id="newStudentHash" required>
+        </div>
+
+        <div class="a-form-row">
+          <label>Full Name</label>
+          <input type="text" id="newStudentName" required>
+        </div>
+
+        <div class="a-form-row">
+          <label>Email</label>
+          <input type="email" id="newStudentEmail">
+        </div>
+
+        <div class="a-form-row">
+          <label>Level</label>
+          <input type="text" id="newStudentLevel" placeholder="Unknown">
+        </div>
+
+        <div class="a-form-row">
+          <label>Class</label>
+          <input type="text" id="newStudentClass" placeholder="Unknown">
+        </div>
+
+        <div class="a-form-row">
+          <label>Parent</label>
+          <input type="text" id="newStudentParent" placeholder="Unknown">
+        </div>
+
+        <div class="a-form-actions">
+          <button type="button" class="a-btn a-btn--ghost" id="cancelAddStudent">Cancel</button>
+          <button type="submit" class="a-btn" id="saveStudentBtn">Save Student</button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
   <script src="../config/config.js"></script>
   <script src="../assets/js/api.js"></script>
   <script src="../assets/js/storage.js"></script>

@@ -321,3 +321,145 @@
 .a-action-btn--danger:hover{
   background: rgba(241,100,46,.08);
 }
+
+/* Modal */
+.a-modal{
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.a-modal.show{
+  display: flex;
+}
+
+.a-modal__backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 43, 43, 0.35);
+  backdrop-filter: blur(2px);
+}
+
+.a-modal__content{
+  position: relative;
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100vh - 48px);
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 50px rgba(80, 78, 118, 0.18);
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.a-modal__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(196,195,227,.18);
+}
+
+.a-modal__header h2{
+  margin: 0;
+  font-size: 18px;
+  color: var(--primary);
+}
+
+.a-modal__close{
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  color: var(--primary);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.a-modal__body{
+  padding: 20px;
+}
+
+.a-detail-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.a-detail-item{
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(253,248,226,.55);
+}
+
+.a-detail-label{
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.a-detail-value{
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-word;
+}
+
+@media (max-width: 700px){
+  .a-detail-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Form */
+
+.a-form{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.a-form-row{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.a-form-row label{
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.a-form-row input{
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  outline: none;
+}
+
+.a-form-row input:focus{
+  border-color: var(--primary);
+}
+
+.a-form-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+body{
+  overflow-y: auto;
+}

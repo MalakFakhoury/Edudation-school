@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Teachers</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <aside class="a-sidebar">
+      <div class="a-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo">
+        <span>eSchool</span>
+      </div>
+
+      <div class="a-profile">
+        <img class="a-avatar" src="../assets/Images/default_profile.avif" alt="Profile">
+        <div>
+          <div class="a-name">Admin Name</div>
+          <div class="a-sub">Administrator</div>
+        </div>
+      </div>
+
+      <nav class="a-nav">
+        <a class="a-nav__item" href="./index.html">Dashboard</a>
+
+        <div class="a-nav__label">Users</div>
+        <a class="a-nav__item" href="./students.html">Students</a>
+        <a class="a-nav__item active" href="./teachers.html">Teachers</a>
+        <a class="a-nav__item" href="./parents.html">Parents</a>
+        <a class="a-nav__item" href="./admins.html">Admins</a>
+
+        <div class="a-nav__label">Academics</div>
+        <a class="a-nav__item" href="./levels.html">Levels</a>
+        <a class="a-nav__item" href="./courses.html">Courses</a>
+        <a class="a-nav__item" href="./classes.html">Classes</a>
+        <a class="a-nav__item" href="./sections.html">Sections</a>
+        <a class="a-nav__item" href="./terms.html">Terms</a>
+
+        <div class="a-nav__sep"></div>
+        <a class="a-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Teachers</h1>
+          <p class="a-desc">Manage teacher records and review available information.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshTeachersBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addTeacherBtn">+ Add Teacher</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="teacherSearch"
+            class="a-search"
+            placeholder="Search by hash, name, or email"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Teacher Hash</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Phone</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="teachersTableBody">
+              <tr>
+                <td colspan="7" class="a-table-empty">Loading teachers...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Teacher Modal -->
+  <div class="a-modal" id="teacherViewModal">
+    <div class="a-modal__backdrop" id="teacherModalBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Teacher Details</h2>
+        <button class="a-modal__close" type="button" id="closeTeacherModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Teacher Hash</span>
+            <span class="a-detail-value" id="detailTeacherHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Name</span>
+            <span class="a-detail-value" id="detailTeacherName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Email</span>
+            <span class="a-detail-value" id="detailTeacherEmail">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Department</span>
+            <span class="a-detail-value" id="detailTeacherDepartment">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Phone</span>
+            <span class="a-detail-value" id="detailTeacherPhone">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailTeacherCreatedAt">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Teacher Modal -->
+  <div class="a-modal" id="addTeacherModal">
+    <div class="a-modal__backdrop" id="addTeacherBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2 id="teacherFormTitle">Add Teacher</h2>
+        <button class="a-modal__close" type="button" id="closeAddTeacherBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addTeacherForm" class="a-form">
+          <div class="a-form-row">
+            <label>Teacher Hash</label>
+            <input type="text" id="newTeacherHash" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Full Name</label>
+            <input type="text" id="newTeacherName" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Email</label>
+            <input type="email" id="newTeacherEmail">
+          </div>
+
+          <div class="a-form-row">
+            <label>Department</label>
+            <input type="text" id="newTeacherDepartment" placeholder="Unknown">
+          </div>
+
+          <div class="a-form-row">
+            <label>Phone</label>
+            <input type="text" id="newTeacherPhone" placeholder="Unknown">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddTeacher">Cancel</button>
+            <button type="submit" class="a-btn" id="saveTeacherBtn">Save Teacher</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="./admin.js"></script>
+</body>
+</html>
