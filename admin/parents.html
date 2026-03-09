@@ -93,6 +93,88 @@
     </main>
   </div>
 
+  <!-- View Parent Modal -->
+  <div class="a-modal" id="parentViewModal">
+    <div class="a-modal__backdrop" id="parentModalBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Parent Details</h2>
+        <button class="a-modal__close" type="button" id="closeParentModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Parent Hash</span>
+            <span class="a-detail-value" id="detailParentHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Name</span>
+            <span class="a-detail-value" id="detailParentName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Email</span>
+            <span class="a-detail-value" id="detailParentEmail">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Phone</span>
+            <span class="a-detail-value" id="detailParentPhone">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailParentCreatedAt">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Parent Modal -->
+  <div class="a-modal" id="addParentModal">
+    <div class="a-modal__backdrop" id="addParentBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2 id="parentFormTitle">Add Parent</h2>
+        <button class="a-modal__close" type="button" id="closeAddParentBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addParentForm" class="a-form">
+          <div class="a-form-row">
+            <label>Parent Hash</label>
+            <input type="text" id="newParentHash" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Full Name</label>
+            <input type="text" id="newParentName" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Email</label>
+            <input type="email" id="newParentEmail">
+          </div>
+
+          <div class="a-form-row">
+            <label>Phone</label>
+            <input type="text" id="newParentPhone" placeholder="Unknown">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddParent">Cancel</button>
+            <button type="submit" class="a-btn" id="saveParentBtn">Save Parent</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="../config/config.js"></script>
   <script src="../assets/js/api.js"></script>
   <script src="../assets/js/storage.js"></script>
