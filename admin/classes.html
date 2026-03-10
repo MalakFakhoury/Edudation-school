@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Classes</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <aside class="a-sidebar">
+      <div class="a-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo">
+        <span>eSchool</span>
+      </div>
+
+      <div class="a-profile">
+        <img class="a-avatar" src="../assets/Images/default_profile.avif" alt="Profile">
+        <div>
+          <div class="a-name">Admin Name</div>
+          <div class="a-sub">Administrator</div>
+        </div>
+      </div>
+
+      <nav class="a-nav">
+        <a class="a-nav__item" href="./index.html">Dashboard</a>
+
+        <div class="a-nav__label">Users</div>
+        <a class="a-nav__item" href="./students.html">Students</a>
+        <a class="a-nav__item" href="./teachers.html">Teachers</a>
+        <a class="a-nav__item" href="./parents.html">Parents</a>
+        <a class="a-nav__item" href="./admins.html">Admins</a>
+
+        <div class="a-nav__label">Academics</div>
+        <a class="a-nav__item" href="./levels.html">Levels</a>
+        <a class="a-nav__item" href="./courses.html">Courses</a>
+        <a class="a-nav__item active" href="./classes.html">Classes</a>
+        <a class="a-nav__item" href="./sections.html">Sections</a>
+        <a class="a-nav__item" href="./terms.html">Terms</a>
+
+        <div class="a-nav__sep"></div>
+        <a class="a-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Classes</h1>
+          <p class="a-desc">Manage classes and their linked grades and sections.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshClassesBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addClassBtn">+ Add Class</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="classSearch"
+            class="a-search"
+            placeholder="Search by class hash, grade hash, or section hash"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Class Hash</th>
+                <th>Grade Hash</th>
+                <th>Section Hash</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="classesTableBody">
+              <tr>
+                <td colspan="4" class="a-table-empty">Loading classes...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Class Modal -->
+  <div class="a-modal" id="classViewModal">
+    <div class="a-modal__backdrop" id="classModalBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Class Details</h2>
+        <button class="a-modal__close" type="button" id="closeClassModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Class Hash</span>
+            <span class="a-detail-value" id="detailClassHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Grade Hash</span>
+            <span class="a-detail-value" id="detailClassGradeHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Section Hash</span>
+            <span class="a-detail-value" id="detailClassSectionHash">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Class Modal -->
+  <div class="a-modal" id="addClassModal">
+    <div class="a-modal__backdrop" id="addClassBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2 id="classFormTitle">Add Class</h2>
+        <button class="a-modal__close" type="button" id="closeAddClassBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addClassForm" class="a-form">
+          <div class="a-form-row">
+            <label>Class Hash</label>
+            <input type="text" id="newClassHash" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Grade Hash</label>
+            <input type="text" id="newClassGradeHash">
+          </div>
+
+          <div class="a-form-row">
+            <label>Section Hash</label>
+            <input type="text" id="newClassSectionHash">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddClass">Cancel</button>
+            <button type="submit" class="a-btn" id="saveClassBtn">Save Class</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="./admin.js"></script>
+</body>
+</html>
