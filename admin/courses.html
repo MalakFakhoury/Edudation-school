@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Courses</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <aside class="a-sidebar">
+      <div class="a-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo">
+        <span>eSchool</span>
+      </div>
+
+      <div class="a-profile">
+        <img class="a-avatar" src="../assets/Images/default_profile.avif" alt="Profile">
+        <div>
+          <div class="a-name">Admin Name</div>
+          <div class="a-sub">Administrator</div>
+        </div>
+      </div>
+
+      <nav class="a-nav">
+        <a class="a-nav__item" href="./index.html">Dashboard</a>
+
+        <div class="a-nav__label">Users</div>
+        <a class="a-nav__item" href="./students.html">Students</a>
+        <a class="a-nav__item" href="./teachers.html">Teachers</a>
+        <a class="a-nav__item" href="./parents.html">Parents</a>
+        <a class="a-nav__item" href="./admins.html">Admins</a>
+
+        <div class="a-nav__label">Academics</div>
+        <a class="a-nav__item" href="./levels.html">Levels</a>
+        <a class="a-nav__item active" href="./courses.html">Courses</a>
+        <a class="a-nav__item" href="./classes.html">Classes</a>
+        <a class="a-nav__item" href="./sections.html">Sections</a>
+        <a class="a-nav__item" href="./terms.html">Terms</a>
+
+        <div class="a-nav__sep"></div>
+        <a class="a-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Courses</h1>
+          <p class="a-desc">Manage course records and academic metadata.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshCoursesBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addCourseBtn">+ Add Course</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="courseSearch"
+            class="a-search"
+            placeholder="Search by course hash, code, or title"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Course Hash</th>
+                <th>Code</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="coursesTableBody">
+              <tr>
+                <td colspan="7" class="a-table-empty">Loading courses...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Course Modal -->
+  <div class="a-modal" id="courseViewModal">
+    <div class="a-modal__backdrop" id="courseModalBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Course Details</h2>
+        <button class="a-modal__close" type="button" id="closeCourseModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Course Hash</span>
+            <span class="a-detail-value" id="detailCourseHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Code</span>
+            <span class="a-detail-value" id="detailCourseCode">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Title</span>
+            <span class="a-detail-value" id="detailCourseTitle">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Credits</span>
+            <span class="a-detail-value" id="detailCourseCredits">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailCourseCreatedAt">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Updated At</span>
+            <span class="a-detail-value" id="detailCourseUpdatedAt">—</span>
+          </div>
+
+          <div class="a-detail-item" style="grid-column: 1 / -1;">
+            <span class="a-detail-label">Description</span>
+            <span class="a-detail-value" id="detailCourseDescription">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Course Modal -->
+  <div class="a-modal" id="addCourseModal">
+    <div class="a-modal__backdrop" id="addCourseBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2 id="courseFormTitle">Add Course</h2>
+        <button class="a-modal__close" type="button" id="closeAddCourseBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addCourseForm" class="a-form">
+          <div class="a-form-row">
+            <label>Course Hash</label>
+            <input type="text" id="newCourseHash" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Code</label>
+            <input type="text" id="newCourseCode" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Title</label>
+            <input type="text" id="newCourseTitle" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Description</label>
+            <input type="text" id="newCourseDescription">
+          </div>
+
+          <div class="a-form-row">
+            <label>Credits</label>
+            <input type="text" id="newCourseCredits">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddCourse">Cancel</button>
+            <button type="submit" class="a-btn" id="saveCourseBtn">Save Course</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="./admin.js"></script>
+</body>
+</html>

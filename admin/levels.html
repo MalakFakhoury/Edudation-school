@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | Terms</title>
+  <title>Admin | Levels</title>
 
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./admin.css" />
@@ -34,11 +34,11 @@
         <a class="a-nav__item" href="./admins.html">Admins</a>
 
         <div class="a-nav__label">Academics</div>
-        <a class="a-nav__item" href="./levels.html">Levels</a>
+        <a class="a-nav__item active" href="./levels.html">Levels</a>
         <a class="a-nav__item" href="./courses.html">Courses</a>
         <a class="a-nav__item" href="./classes.html">Classes</a>
         <a class="a-nav__item" href="./sections.html">Sections</a>
-        <a class="a-nav__item active" href="./terms.html">Terms</a>
+        <a class="a-nav__item" href="./terms.html">Terms</a>
 
         <div class="a-nav__sep"></div>
         <a class="a-nav__item" href="../login/index.html">Logout</a>
@@ -48,13 +48,13 @@
     <main class="a-main">
       <header class="a-topbar">
         <div>
-          <h1 class="a-title">Terms</h1>
-          <p class="a-desc">Manage academic terms and date ranges.</p>
+          <h1 class="a-title">Levels</h1>
+          <p class="a-desc">Manage school grade levels.</p>
         </div>
 
         <div class="a-actions">
-          <button class="a-btn a-btn--ghost" type="button" id="refreshTermsBtn">Refresh</button>
-          <button class="a-btn" type="button" id="addTermBtn">+ Add Term</button>
+          <button class="a-btn a-btn--ghost" type="button" id="refreshLevelsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addLevelBtn">+ Add Level</button>
         </div>
       </header>
 
@@ -62,9 +62,9 @@
         <div class="a-search-wrap">
           <input
             type="text"
-            id="termSearch"
+            id="levelSearch"
             class="a-search"
-            placeholder="Search by term hash or name"
+            placeholder="Search by grade hash or name"
           />
         </div>
       </section>
@@ -74,17 +74,14 @@
           <table class="a-table">
             <thead>
               <tr>
-                <th>Term Hash</th>
+                <th>Grade Hash</th>
                 <th>Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Created At</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="termsTableBody">
+            <tbody id="levelsTableBody">
               <tr>
-                <td colspan="6" class="a-table-empty">Loading terms...</td>
+                <td colspan="3" class="a-table-empty">Loading levels...</td>
               </tr>
             </tbody>
           </table>
@@ -93,82 +90,57 @@
     </main>
   </div>
 
-  <!-- View Term Modal -->
-  <div class="a-modal" id="termViewModal">
-    <div class="a-modal__backdrop" id="termModalBackdrop"></div>
+  <!-- View Level Modal -->
+  <div class="a-modal" id="levelViewModal">
+    <div class="a-modal__backdrop" id="levelModalBackdrop"></div>
 
     <div class="a-modal__content">
       <div class="a-modal__header">
-        <h2>Term Details</h2>
-        <button class="a-modal__close" type="button" id="closeTermModalBtn">×</button>
+        <h2>Level Details</h2>
+        <button class="a-modal__close" type="button" id="closeLevelModalBtn">×</button>
       </div>
 
       <div class="a-modal__body">
         <div class="a-detail-grid">
           <div class="a-detail-item">
-            <span class="a-detail-label">Term Hash</span>
-            <span class="a-detail-value" id="detailTermHash">—</span>
+            <span class="a-detail-label">Grade Hash</span>
+            <span class="a-detail-value" id="detailLevelHash">—</span>
           </div>
 
           <div class="a-detail-item">
             <span class="a-detail-label">Name</span>
-            <span class="a-detail-value" id="detailTermName">—</span>
-          </div>
-
-          <div class="a-detail-item">
-            <span class="a-detail-label">Start Date</span>
-            <span class="a-detail-value" id="detailTermStartDate">—</span>
-          </div>
-
-          <div class="a-detail-item">
-            <span class="a-detail-label">End Date</span>
-            <span class="a-detail-value" id="detailTermEndDate">—</span>
-          </div>
-
-          <div class="a-detail-item">
-            <span class="a-detail-label">Created At</span>
-            <span class="a-detail-value" id="detailTermCreatedAt">—</span>
+            <span class="a-detail-value" id="detailLevelName">—</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Add/Edit Term Modal -->
-  <div class="a-modal" id="addTermModal">
-    <div class="a-modal__backdrop" id="addTermBackdrop"></div>
+  <!-- Add/Edit Level Modal -->
+  <div class="a-modal" id="addLevelModal">
+    <div class="a-modal__backdrop" id="addLevelBackdrop"></div>
 
     <div class="a-modal__content">
       <div class="a-modal__header">
-        <h2 id="termFormTitle">Add Term</h2>
-        <button class="a-modal__close" type="button" id="closeAddTermBtn">×</button>
+        <h2 id="levelFormTitle">Add Level</h2>
+        <button class="a-modal__close" type="button" id="closeAddLevelBtn">×</button>
       </div>
 
       <div class="a-modal__body">
-        <form id="addTermForm" class="a-form">
+        <form id="addLevelForm" class="a-form">
           <div class="a-form-row">
-            <label>Term Hash</label>
-            <input type="text" id="newTermHash" required>
+            <label>Grade Hash</label>
+            <input type="text" id="newLevelHash" required>
           </div>
 
           <div class="a-form-row">
             <label>Name</label>
-            <input type="text" id="newTermName" required>
-          </div>
-
-          <div class="a-form-row">
-            <label>Start Date</label>
-            <input type="date" id="newTermStartDate">
-          </div>
-
-          <div class="a-form-row">
-            <label>End Date</label>
-            <input type="date" id="newTermEndDate">
+            <input type="text" id="newLevelName" required>
           </div>
 
           <div class="a-form-actions">
-            <button type="button" class="a-btn a-btn--ghost" id="cancelAddTerm">Cancel</button>
-            <button type="submit" class="a-btn" id="saveTermBtn">Save Term</button>
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddLevel">Cancel</button>
+            <button type="submit" class="a-btn" id="saveLevelBtn">Save Level</button>
           </div>
         </form>
       </div>

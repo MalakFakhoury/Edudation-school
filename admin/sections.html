@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Sections</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <aside class="a-sidebar">
+      <div class="a-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo">
+        <span>eSchool</span>
+      </div>
+
+      <div class="a-profile">
+        <img class="a-avatar" src="../assets/Images/default_profile.avif" alt="Profile">
+        <div>
+          <div class="a-name">Admin Name</div>
+          <div class="a-sub">Administrator</div>
+        </div>
+      </div>
+
+      <nav class="a-nav">
+        <a class="a-nav__item" href="./index.html">Dashboard</a>
+
+        <div class="a-nav__label">Users</div>
+        <a class="a-nav__item" href="./students.html">Students</a>
+        <a class="a-nav__item" href="./teachers.html">Teachers</a>
+        <a class="a-nav__item" href="./parents.html">Parents</a>
+        <a class="a-nav__item" href="./admins.html">Admins</a>
+
+        <div class="a-nav__label">Academics</div>
+        <a class="a-nav__item" href="./levels.html">Levels</a>
+        <a class="a-nav__item" href="./courses.html">Courses</a>
+        <a class="a-nav__item" href="./classes.html">Classes</a>
+        <a class="a-nav__item active" href="./sections.html">Sections</a>
+        <a class="a-nav__item" href="./terms.html">Terms</a>
+
+        <div class="a-nav__sep"></div>
+        <a class="a-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Sections</h1>
+          <p class="a-desc">Manage course sections and teacher assignments.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshSectionsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addSectionBtn">+ Add Section</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="sectionSearch"
+            class="a-search"
+            placeholder="Search by section code, teacher, or hash"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Section Hash</th>
+                <th>Offering Hash</th>
+                <th>Section Code</th>
+                <th>Teacher Hash</th>
+                <th>Teacher Name</th>
+                <th>Capacity</th>
+                <th>Mode</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sectionsTableBody">
+              <tr>
+                <td colspan="8" class="a-table-empty">Loading sections...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+<div class="a-modal" id="sectionViewModal">
+  <div class="a-modal__backdrop" id="sectionModalBackdrop"></div>
+
+  <div class="a-modal__content">
+    <div class="a-modal__header">
+      <h2>Section Details</h2>
+      <button class="a-modal__close" type="button" id="closeSectionModalBtn">×</button>
+    </div>
+
+    <div class="a-modal__body">
+      <div class="a-detail-grid">
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Section Hash</span>
+          <span class="a-detail-value" id="detailSectionHash">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Offering Hash</span>
+          <span class="a-detail-value" id="detailOfferingHash">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Section Code</span>
+          <span class="a-detail-value" id="detailSectionCode">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Teacher Hash</span>
+          <span class="a-detail-value" id="detailSectionTeacherHash">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Teacher Name</span>
+          <span class="a-detail-value" id="detailSectionTeacherName">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Capacity</span>
+          <span class="a-detail-value" id="detailCapacity">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Mode</span>
+          <span class="a-detail-value" id="detailMode">—</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="a-modal" id="addSectionModal">
+  <div class="a-modal__backdrop" id="addSectionBackdrop"></div>
+
+  <div class="a-modal__content">
+    <div class="a-modal__header">
+      <h2 id="sectionFormTitle">Add Section</h2>
+      <button class="a-modal__close" type="button" id="closeAddSectionBtn">×</button>
+    </div>
+
+    <div class="a-modal__body">
+      <form id="addSectionForm" class="a-form">
+
+        <div class="a-form-row">
+          <label>Section Hash</label>
+          <input type="text" id="newSectionHash" required>
+        </div>
+
+        <div class="a-form-row">
+          <label>Offering Hash</label>
+          <input type="text" id="newOfferingHash">
+        </div>
+
+        <div class="a-form-row">
+          <label>Section Code</label>
+          <input type="text" id="newSectionCode">
+        </div>
+
+        <div class="a-form-row">
+          <label>Teacher Hash</label>
+          <input type="text" id="newSectionTeacherHash">
+        </div>
+
+        <div class="a-form-row">
+          <label>Capacity</label>
+          <input type="number" id="newCapacity">
+        </div>
+
+        <div class="a-form-row">
+          <label>Mode</label>
+          <input type="text" id="newMode" placeholder="Online / In Person">
+        </div>
+
+        <div class="a-form-actions">
+          <button type="button" class="a-btn a-btn--ghost" id="cancelAddSection">Cancel</button>
+          <button type="submit" class="a-btn" id="saveSectionBtn">Save Section</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="./admin.js"></script>
+</body>
+</html>
