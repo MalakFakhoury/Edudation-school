@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Class Timetable</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+
+<div class="a-layout">
+
+<aside class="a-sidebar">
+<div class="a-brand">
+<img src="../assets/Images/logo-education.jpeg">
+<span>eSchool</span>
+</div>
+
+<nav class="a-nav">
+
+<div class="a-nav__label">Academics</div>
+<a class="a-nav__item" href="./levels.html">Levels</a>
+<a class="a-nav__item" href="./courses.html">Courses</a>
+<a class="a-nav__item" href="./classes.html">Classes</a>
+<a class="a-nav__item" href="./sections.html">Sections</a>
+<a class="a-nav__item" href="./terms.html">Terms</a>
+
+<div class="a-nav__label">Schedules</div>
+<a class="a-nav__item" href="./teacher-timetable.html">Teacher Timetable</a>
+<a class="a-nav__item active" href="./class-timetable.html">Class Timetable</a>
+
+</nav>
+</aside>
+
+<main class="a-main">
+
+<header class="a-topbar">
+<h1 class="a-title">Class Timetable</h1>
+
+<div class="a-actions">
+<button class="a-btn a-btn--ghost" id="refreshClassTimetableBtn">
+Refresh
+</button>
+</div>
+</header>
+
+<section class="a-page-tools">
+<input
+id="classTimetableSearch"
+class="a-search"
+placeholder="Search by section hash or day"
+/>
+</section>
+
+<section class="a-table-card">
+
+<table class="a-table">
+
+<thead>
+<tr>
+<th>Timetable Hash</th>
+<th>Day</th>
+<th>Period</th>
+<th>Section Hash</th>
+<th>Start</th>
+<th>End</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="classTimetableTableBody">
+<tr>
+<td colspan="7" class="a-table-empty">
+Loading timetable...
+</td>
+</tr>
+</tbody>
+
+</table>
+
+</section>
+
+</main>
+</div>
+
+<div class="a-modal" id="classTimetableViewModal">
+
+<div class="a-modal__backdrop" id="classTimetableBackdrop"></div>
+
+<div class="a-modal__content">
+
+<div class="a-modal__header">
+<h2>Timetable Details</h2>
+<button id="closeClassTimetableModalBtn">×</button>
+</div>
+
+<div class="a-modal__body">
+
+<p><b>Hash:</b> <span id="detailClassTimetableHash"></span></p>
+<p><b>Day:</b> <span id="detailClassTimetableDay"></span></p>
+<p><b>Period:</b> <span id="detailClassTimetablePeriod"></span></p>
+<p><b>Section:</b> <span id="detailClassTimetableSectionHash"></span></p>
+<p><b>Start:</b> <span id="detailClassTimetableStart"></span></p>
+<p><b>End:</b> <span id="detailClassTimetableEnd"></span></p>
+
+</div>
+</div>
+</div>
+
+<script src="../config/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="./admin.js"></script>
+
+</body>
+</html>

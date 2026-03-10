@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | Levels</title>
+  <title>Admin | Teacher Timetable</title>
 
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./admin.css" />
@@ -31,14 +31,17 @@
         <a class="a-nav__item" href="./students.html">Students</a>
         <a class="a-nav__item" href="./teachers.html">Teachers</a>
         <a class="a-nav__item" href="./parents.html">Parents</a>
-        <a class="a-nav__item" href="./admins.html">Admins</a>
 
         <div class="a-nav__label">Academics</div>
-        <a class="a-nav__item active" href="./levels.html">Levels</a>
+        <a class="a-nav__item" href="./levels.html">Levels</a>
         <a class="a-nav__item" href="./courses.html">Courses</a>
         <a class="a-nav__item" href="./classes.html">Classes</a>
         <a class="a-nav__item" href="./sections.html">Sections</a>
         <a class="a-nav__item" href="./terms.html">Terms</a>
+
+        <div class="a-nav__label">Schedules</div>
+        <a class="a-nav__item active" href="./teacher-timetable.html">Teacher Timetable</a>
+        <a class="a-nav__item" href="./class-timetable.html">Class Timetable</a>
 
         <div class="a-nav__sep"></div>
         <a class="a-nav__item" href="../login/index.html">Logout</a>
@@ -48,13 +51,12 @@
     <main class="a-main">
       <header class="a-topbar">
         <div>
-          <h1 class="a-title">Levels</h1>
-          <p class="a-desc">Manage school grade levels.</p>
+          <h1 class="a-title">Teacher Timetable</h1>
+          <p class="a-desc">Review teacher schedule slots by day and period.</p>
         </div>
 
         <div class="a-actions">
-          <button class="a-btn a-btn--ghost" type="button" id="refreshLevelsBtn">Refresh</button>
-          <button class="a-btn" type="button" id="addLevelBtn">+ Add Level</button>
+          <button class="a-btn a-btn--ghost" type="button" id="refreshTeacherTimetableBtn">Refresh</button>
         </div>
       </header>
 
@@ -62,9 +64,9 @@
         <div class="a-search-wrap">
           <input
             type="text"
-            id="levelSearch"
+            id="teacherTimetableSearch"
             class="a-search"
-            placeholder="Search by grade hash or name"
+            placeholder="Search by day, section hash, or class group hash"
           />
         </div>
       </section>
@@ -74,14 +76,19 @@
           <table class="a-table">
             <thead>
               <tr>
-                <th>Grade Hash</th>
-                <th>Name</th>
+                <th>Timetable Hash</th>
+                <th>Class Group Hash</th>
+                <th>Day</th>
+                <th>Period</th>
+                <th>Section Hash</th>
+                <th>Start Time</th>
+                <th>End Time</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="levelsTableBody">
+            <tbody id="teacherTimetableTableBody">
               <tr>
-                <td colspan="3" class="a-table-empty">Loading levels...</td>
+                <td colspan="8" class="a-table-empty">Loading timetable...</td>
               </tr>
             </tbody>
           </table>
@@ -90,59 +97,52 @@
     </main>
   </div>
 
-  <!-- View Level Modal -->
-  <div class="a-modal" id="levelViewModal">
-    <div class="a-modal__backdrop" id="levelModalBackdrop"></div>
+  <div class="a-modal" id="teacherTimetableViewModal">
+    <div class="a-modal__backdrop" id="teacherTimetableBackdrop"></div>
 
     <div class="a-modal__content">
       <div class="a-modal__header">
-        <h2>Level Details</h2>
-        <button class="a-modal__close" type="button" id="closeLevelModalBtn">×</button>
+        <h2>Timetable Slot Details</h2>
+        <button class="a-modal__close" type="button" id="closeTeacherTimetableModalBtn">×</button>
       </div>
 
       <div class="a-modal__body">
         <div class="a-detail-grid">
           <div class="a-detail-item">
-            <span class="a-detail-label">Grade Hash</span>
-            <span class="a-detail-value" id="detailLevelHash">—</span>
+            <span class="a-detail-label">Timetable Hash</span>
+            <span class="a-detail-value" id="detailTeacherTimetableHash">—</span>
           </div>
 
           <div class="a-detail-item">
-            <span class="a-detail-label">Name</span>
-            <span class="a-detail-value" id="detailLevelName">—</span>
+            <span class="a-detail-label">Class Group Hash</span>
+            <span class="a-detail-value" id="detailTeacherClassGroupHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Day</span>
+            <span class="a-detail-value" id="detailTeacherTimetableDay">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Period</span>
+            <span class="a-detail-value" id="detailTeacherTimetablePeriod">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Section Hash</span>
+            <span class="a-detail-value" id="detailTeacherTimetableSectionHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Start Time</span>
+            <span class="a-detail-value" id="detailTeacherTimetableStart">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">End Time</span>
+            <span class="a-detail-value" id="detailTeacherTimetableEnd">—</span>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add/Edit Level Modal -->
-  <div class="a-modal" id="addLevelModal">
-    <div class="a-modal__backdrop" id="addLevelBackdrop"></div>
-
-    <div class="a-modal__content">
-      <div class="a-modal__header">
-        <h2 id="levelFormTitle">Add Level</h2>
-        <button class="a-modal__close" type="button" id="closeAddLevelBtn">×</button>
-      </div>
-
-      <div class="a-modal__body">
-        <form id="addLevelForm" class="a-form">
-          <div class="a-form-row">
-            <label>Grade Hash</label>
-            <input type="text" id="newLevelHash" required>
-          </div>
-
-          <div class="a-form-row">
-            <label>Name</label>
-            <input type="text" id="newLevelName" required>
-          </div>
-
-          <div class="a-form-actions">
-            <button type="button" class="a-btn a-btn--ghost" id="cancelAddLevel">Cancel</button>
-            <button type="submit" class="a-btn" id="saveLevelBtn">Save Level</button>
-          </div>
-        </form>
       </div>
     </div>
   </div>
