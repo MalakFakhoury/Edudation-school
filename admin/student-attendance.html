@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Student Attendance</title>
+
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+
+<div class="a-layout">
+
+<div id="sidebar-container"></div>
+
+<main class="a-main">
+
+<header class="a-topbar">
+<div>
+<h1 class="a-title">Student Attendance</h1>
+<p class="a-desc">Review full attendance history of a student.</p>
+</div>
+
+<div class="a-actions">
+<button class="a-btn a-btn--ghost" id="refreshStudentAttendanceBtn">Refresh</button>
+</div>
+</header>
+
+<section class="a-page-tools">
+<div class="a-search-wrap">
+<input
+type="text"
+id="studentAttendanceSearch"
+class="a-search"
+placeholder="Search by date, status, or note"
+/>
+</div>
+</section>
+
+<section class="a-table-card">
+<div class="a-table-wrap">
+
+<table class="a-table">
+
+<thead>
+<tr>
+<th>Daily Hash</th>
+<th>Date</th>
+<th>Status</th>
+<th>Absence Type</th>
+<th>Minutes Late</th>
+<th>Note</th>
+<th>Recorded Role</th>
+<th>Recorded Hash</th>
+<th>Created</th>
+<th>Updated</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="studentAttendanceTableBody">
+
+<tr>
+<td colspan="11" class="a-table-empty">Loading attendance...</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+</section>
+
+</main>
+
+</div>
+<div class="a-modal" id="studentAttendanceViewModal">
+  <div class="a-modal__backdrop" id="studentAttendanceBackdrop"></div>
+
+  <div class="a-modal__content">
+    <div class="a-modal__header">
+      <h2>Attendance Details</h2>
+      <button class="a-modal__close" type="button" id="closeStudentAttendanceModalBtn">×</button>
+    </div>
+
+    <div class="a-modal__body">
+      <div class="a-detail-grid">
+        <div class="a-detail-item">
+          <span class="a-detail-label">Daily Hash</span>
+          <span class="a-detail-value" id="detailStudentAttendanceDailyHash">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Attendance Date</span>
+          <span class="a-detail-value" id="detailStudentAttendanceDate">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Status</span>
+          <span class="a-detail-value" id="detailStudentAttendanceStatus">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Absence Type</span>
+          <span class="a-detail-value" id="detailStudentAttendanceAbsenceType">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Minutes Late</span>
+          <span class="a-detail-value" id="detailStudentAttendanceMinutesLate">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Recorded By Role</span>
+          <span class="a-detail-value" id="detailStudentAttendanceRecordedRole">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Recorded By Hash</span>
+          <span class="a-detail-value" id="detailStudentAttendanceRecordedHash">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Created At</span>
+          <span class="a-detail-value" id="detailStudentAttendanceCreatedAt">—</span>
+        </div>
+
+        <div class="a-detail-item">
+          <span class="a-detail-label">Updated At</span>
+          <span class="a-detail-value" id="detailStudentAttendanceUpdatedAt">—</span>
+        </div>
+
+        <div class="a-detail-item" style="grid-column: 1 / -1;">
+          <span class="a-detail-label">Note</span>
+          <span class="a-detail-value" id="detailStudentAttendanceNote">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../config/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/load-sidebar.js"></script>
+
+<script src="../assets/js/admin/student-attendance.js"></script>
+
+</body>
+</html>
