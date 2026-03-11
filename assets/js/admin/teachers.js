@@ -1,0 +1,10 @@
+/*
+Teachers Page
+renderTeachers
+fetchTeachers
+filterTeachers
+viewTeacher
+openAddTeacherModal
+editTeacher
+deleteTeacher
+*/
