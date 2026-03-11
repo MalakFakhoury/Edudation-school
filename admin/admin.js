@@ -11,2449 +11,2449 @@ function formatValue(value) {
 // =========================
 // Students Page
 // =========================
-const studentsTableBody = document.getElementById("studentsTableBody");
-const studentSearch = document.getElementById("studentSearch");
-const refreshStudentsBtn = document.getElementById("refreshStudentsBtn");
-const addStudentBtn = document.getElementById("addStudentBtn");
-
-const studentViewModal = document.getElementById("studentViewModal");
-const closeStudentModalBtn = document.getElementById("closeStudentModalBtn");
-const studentModalBackdrop = document.getElementById("studentModalBackdrop");
-
-const detailStudentHash = document.getElementById("detailStudentHash");
-const detailStudentName = document.getElementById("detailStudentName");
-const detailStudentEmail = document.getElementById("detailStudentEmail");
-const detailStudentLevel = document.getElementById("detailStudentLevel");
-const detailStudentClass = document.getElementById("detailStudentClass");
-const detailStudentParent = document.getElementById("detailStudentParent");
-const detailStudentCreatedAt = document.getElementById("detailStudentCreatedAt");
-
-const addStudentModal = document.getElementById("addStudentModal");
-const addStudentBackdrop = document.getElementById("addStudentBackdrop");
-const closeAddStudentBtn = document.getElementById("closeAddStudentBtn");
-const cancelAddStudent = document.getElementById("cancelAddStudent");
-const addStudentForm = document.getElementById("addStudentForm");
-
-const studentFormTitle = document.getElementById("studentFormTitle");
-const saveStudentBtn = document.getElementById("saveStudentBtn");
-
-const newStudentHash = document.getElementById("newStudentHash");
-const newStudentName = document.getElementById("newStudentName");
-const newStudentEmail = document.getElementById("newStudentEmail");
-const newStudentLevel = document.getElementById("newStudentLevel");
-const newStudentClass = document.getElementById("newStudentClass");
-const newStudentParent = document.getElementById("newStudentParent");
-
-let studentsData = [];
-let editingStudentHash = null;
-
-const mockStudents = [
-  {
-    student_hash: "STU_001",
-    name: "Ahmad Ali",
-    email: "ahmad@example.com",
-    created_at: "2026-03-01",
-    level_name: "Grade 9",
-    class_name: "A",
-    parent_name: "Ali Ahmad"
-  },
-  {
-    student_hash: "STU_002",
-    name: "Lina Hassan",
-    email: "lina@example.com",
-    created_at: "2026-03-03",
-    level_name: "Grade 10",
-    class_name: "B",
-    parent_name: "Hassan Lina"
-  }
-];
-
-function renderStudents(data) {
-  if (!studentsTableBody) return;
-
-  if (!data || data.length === 0) {
-    studentsTableBody.innerHTML = `
-      <tr>
-        <td colspan="8" class="a-table-empty">No students found.</td>
-      </tr>
-    `;
-    return;
-  }
-
-  studentsTableBody.innerHTML = data.map((student) => `
-    <tr>
-      <td>${formatValue(student.student_hash)}</td>
-      <td>${formatValue(student.name)}</td>
-      <td>${formatValue(student.email)}</td>
-      <td>${formatValue(student.level_name)}</td>
-      <td>${formatValue(student.class_name)}</td>
-      <td>${formatValue(student.parent_name)}</td>
-      <td>${formatValue(student.created_at)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewStudent('${student.student_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editStudent('${student.student_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteStudent('${student.student_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
-
-async function fetchStudents() {
-  if (!studentsTableBody) return;
-
-  studentsTableBody.innerHTML = `
-    <tr>
-      <td colspan="8" class="a-table-empty">Loading students...</td>
-    </tr>
-  `;
-
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_students", "GET", null, token);
-
-    if (Array.isArray(response) && response.length > 0) {
-      studentsData = response.map((student) => ({
-        student_hash: student.student_hash || "Unknown",
-        name: student.name || "Unknown",
-        email: student.email || "Unknown",
-        created_at: student.created_at || "Unknown",
-        level_name: student.level_name || "Unknown",
-        class_name: student.class_name || "Unknown",
-        parent_name: student.parent_name || "Unknown"
-      }));
-    } else {
-      studentsData = mockStudents;
-    }
-
-    renderStudents(studentsData);
-  } catch (error) {
-    console.error("Error fetching students:", error);
-    studentsData = mockStudents;
-    renderStudents(studentsData);
-  }
-}
-
-function filterStudents() {
-  if (!studentSearch) return;
-
-  const query = studentSearch.value.trim().toLowerCase();
-
-  const filtered = studentsData.filter((student) =>
-    String(student.student_hash).toLowerCase().includes(query) ||
-    String(student.name).toLowerCase().includes(query) ||
-    String(student.email).toLowerCase().includes(query)
-  );
-
-  renderStudents(filtered);
-}
-
-function viewStudent(studentHash) {
-  const student = studentsData.find((item) => item.student_hash === studentHash);
-  if (!student || !studentViewModal) return;
-
-  detailStudentHash.textContent = formatValue(student.student_hash);
-  detailStudentName.textContent = formatValue(student.name);
-  detailStudentEmail.textContent = formatValue(student.email);
-  detailStudentLevel.textContent = formatValue(student.level_name);
-  detailStudentClass.textContent = formatValue(student.class_name);
-  detailStudentParent.textContent = formatValue(student.parent_name);
-  detailStudentCreatedAt.textContent = formatValue(student.created_at);
-
-  studentViewModal.classList.add("show");
-}
-
-function closeStudentModal() {
-  if (!studentViewModal) return;
-  studentViewModal.classList.remove("show");
-}
-
-function openAddStudentModal() {
-  if (!addStudentModal) return;
-
-  editingStudentHash = null;
-
-  if (studentFormTitle) studentFormTitle.textContent = "Add Student";
-  if (saveStudentBtn) saveStudentBtn.textContent = "Save Student";
-  if (addStudentForm) addStudentForm.reset();
-  if (newStudentHash) newStudentHash.disabled = false;
-
-  addStudentModal.classList.add("show");
-}
-
-function closeAddStudentModal() {
-  if (!addStudentModal) return;
-
-  addStudentModal.classList.remove("show");
-  editingStudentHash = null;
-
-  if (addStudentForm) addStudentForm.reset();
-  if (newStudentHash) newStudentHash.disabled = false;
-  if (studentFormTitle) studentFormTitle.textContent = "Add Student";
-  if (saveStudentBtn) saveStudentBtn.textContent = "Save Student";
-}
-
-function editStudent(studentHash) {
-  const student = studentsData.find((item) => item.student_hash === studentHash);
-  if (!student || !addStudentModal) return;
-
-  editingStudentHash = studentHash;
-
-  if (studentFormTitle) studentFormTitle.textContent = "Edit Student";
-  if (saveStudentBtn) saveStudentBtn.textContent = "Update Student";
-
-  newStudentHash.value = student.student_hash || "";
-  newStudentName.value = student.name || "";
-  newStudentEmail.value = student.email || "";
-  newStudentLevel.value = student.level_name || "";
-  newStudentClass.value = student.class_name || "";
-  newStudentParent.value = student.parent_name || "";
-
-  if (newStudentHash) newStudentHash.disabled = true;
-
-  addStudentModal.classList.add("show");
-}
-
-function deleteStudent(studentHash) {
-  const confirmed = confirm(`Are you sure you want to delete student ${studentHash}?`);
-  if (!confirmed) return;
-
-  studentsData = studentsData.filter((student) => student.student_hash !== studentHash);
-  renderStudents(studentsData);
-}
-
-if (studentsTableBody) {
-  fetchStudents();
-
-  if (studentSearch) studentSearch.addEventListener("input", filterStudents);
-  if (refreshStudentsBtn) refreshStudentsBtn.addEventListener("click", fetchStudents);
-  if (addStudentBtn) addStudentBtn.addEventListener("click", openAddStudentModal);
-  if (closeStudentModalBtn) closeStudentModalBtn.addEventListener("click", closeStudentModal);
-  if (studentModalBackdrop) studentModalBackdrop.addEventListener("click", closeStudentModal);
-  if (closeAddStudentBtn) closeAddStudentBtn.addEventListener("click", closeAddStudentModal);
-  if (cancelAddStudent) cancelAddStudent.addEventListener("click", closeAddStudentModal);
-  if (addStudentBackdrop) addStudentBackdrop.addEventListener("click", closeAddStudentModal);
-
-  if (addStudentForm) {
-    addStudentForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const studentPayload = {
-        student_hash: newStudentHash.value,
-        name: newStudentName.value,
-        email: newStudentEmail.value,
-        level_name: newStudentLevel.value || "Unknown",
-        class_name: newStudentClass.value || "Unknown",
-        parent_name: newStudentParent.value || "Unknown"
-      };
-
-      if (editingStudentHash) {
-        studentsData = studentsData.map((student) => {
-          if (student.student_hash === editingStudentHash) {
-            return { ...student, ...studentPayload };
-          }
-          return student;
-        });
-      } else {
-        studentsData.push({
-          ...studentPayload,
-          created_at: new Date().toISOString().split("T")[0]
-        });
-      }
-
-      renderStudents(studentsData);
-      closeAddStudentModal();
-    });
-  }
-}
-
-// =========================
-// Teachers Page
-// =========================
-const teachersTableBody = document.getElementById("teachersTableBody");
-const teacherSearch = document.getElementById("teacherSearch");
-const refreshTeachersBtn = document.getElementById("refreshTeachersBtn");
-const addTeacherBtn = document.getElementById("addTeacherBtn");
-
-const teacherViewModal = document.getElementById("teacherViewModal");
-const closeTeacherModalBtn = document.getElementById("closeTeacherModalBtn");
-const teacherModalBackdrop = document.getElementById("teacherModalBackdrop");
-
-const detailTeacherHash = document.getElementById("detailTeacherHash");
-const detailTeacherName = document.getElementById("detailTeacherName");
-const detailTeacherEmail = document.getElementById("detailTeacherEmail");
-const detailTeacherDepartment = document.getElementById("detailTeacherDepartment");
-const detailTeacherPhone = document.getElementById("detailTeacherPhone");
-const detailTeacherCreatedAt = document.getElementById("detailTeacherCreatedAt");
-
-const addTeacherModal = document.getElementById("addTeacherModal");
-const addTeacherBackdrop = document.getElementById("addTeacherBackdrop");
-const closeAddTeacherBtn = document.getElementById("closeAddTeacherBtn");
-const cancelAddTeacher = document.getElementById("cancelAddTeacher");
-const addTeacherForm = document.getElementById("addTeacherForm");
-
-const teacherFormTitle = document.getElementById("teacherFormTitle");
-const saveTeacherBtn = document.getElementById("saveTeacherBtn");
-
-const newTeacherHash = document.getElementById("newTeacherHash");
-const newTeacherName = document.getElementById("newTeacherName");
-const newTeacherEmail = document.getElementById("newTeacherEmail");
-const newTeacherDepartment = document.getElementById("newTeacherDepartment");
-const newTeacherPhone = document.getElementById("newTeacherPhone");
-
-let teachersData = [];
-let editingTeacherHash = null;
-
-const mockTeachers = [
-  {
-    teacher_hash: "TCH_001",
-    name: "Maya Haddad",
-    email: "maya@example.com",
-    department: "Math",
-    phone: "03 111 222",
-    created_at: "2026-03-02"
-  },
-  {
-    teacher_hash: "TCH_002",
-    name: "Rami Saleh",
-    email: "rami@example.com",
-    department: "Physics",
-    phone: "70 555 666",
-    created_at: "2026-03-04"
-  }
-];
-
-function renderTeachers(data) {
-  if (!teachersTableBody) return;
-
-  if (!data || data.length === 0) {
-    teachersTableBody.innerHTML = `
-      <tr>
-        <td colspan="7" class="a-table-empty">No teachers found.</td>
-      </tr>
-    `;
-    return;
-  }
-
-  teachersTableBody.innerHTML = data.map((teacher) => `
-    <tr>
-      <td>${formatValue(teacher.teacher_hash)}</td>
-      <td>${formatValue(teacher.name)}</td>
-      <td>${formatValue(teacher.email)}</td>
-      <td>${formatValue(teacher.department)}</td>
-      <td>${formatValue(teacher.phone)}</td>
-      <td>${formatValue(teacher.created_at)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewTeacher('${teacher.teacher_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editTeacher('${teacher.teacher_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteTeacher('${teacher.teacher_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
-
-async function fetchTeachers() {
-  if (!teachersTableBody) return;
-
-  teachersTableBody.innerHTML = `
-    <tr>
-      <td colspan="7" class="a-table-empty">Loading teachers...</td>
-    </tr>
-  `;
-
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_teachers", "GET", null, token);
-
-    if (Array.isArray(response) && response.length > 0) {
-      teachersData = response.map((teacher) => ({
-        teacher_hash: teacher.teacher_hash || "Unknown",
-        name: teacher.name || "Unknown",
-        email: teacher.email || "Unknown",
-        department: teacher.department || "Unknown",
-        phone: teacher.phone || "Unknown",
-        created_at: teacher.created_at || "Unknown"
-      }));
-    } else {
-      teachersData = mockTeachers;
-    }
-
-    renderTeachers(teachersData);
-  } catch (error) {
-    console.error("Error fetching teachers:", error);
-    teachersData = mockTeachers;
-    renderTeachers(teachersData);
-  }
-}
-
-function filterTeachers() {
-  if (!teacherSearch) return;
-
-  const query = teacherSearch.value.trim().toLowerCase();
-
-  const filtered = teachersData.filter((teacher) =>
-    String(teacher.teacher_hash).toLowerCase().includes(query) ||
-    String(teacher.name).toLowerCase().includes(query) ||
-    String(teacher.email).toLowerCase().includes(query)
-  );
-
-  renderTeachers(filtered);
-}
-
-function viewTeacher(teacherHash) {
-  const teacher = teachersData.find((item) => item.teacher_hash === teacherHash);
-  if (!teacher || !teacherViewModal) return;
-
-  detailTeacherHash.textContent = formatValue(teacher.teacher_hash);
-  detailTeacherName.textContent = formatValue(teacher.name);
-  detailTeacherEmail.textContent = formatValue(teacher.email);
-  detailTeacherDepartment.textContent = formatValue(teacher.department);
-  detailTeacherPhone.textContent = formatValue(teacher.phone);
-  detailTeacherCreatedAt.textContent = formatValue(teacher.created_at);
-
-  teacherViewModal.classList.add("show");
-}
-
-function closeTeacherModal() {
-  if (!teacherViewModal) return;
-  teacherViewModal.classList.remove("show");
-}
-
-function openAddTeacherModal() {
-  if (!addTeacherModal) return;
-
-  editingTeacherHash = null;
-
-  if (teacherFormTitle) teacherFormTitle.textContent = "Add Teacher";
-  if (saveTeacherBtn) saveTeacherBtn.textContent = "Save Teacher";
-  if (addTeacherForm) addTeacherForm.reset();
-  if (newTeacherHash) newTeacherHash.disabled = false;
-
-  addTeacherModal.classList.add("show");
-}
-
-function closeAddTeacherModal() {
-  if (!addTeacherModal) return;
-
-  addTeacherModal.classList.remove("show");
-  editingTeacherHash = null;
-
-  if (addTeacherForm) addTeacherForm.reset();
-  if (newTeacherHash) newTeacherHash.disabled = false;
-  if (teacherFormTitle) teacherFormTitle.textContent = "Add Teacher";
-  if (saveTeacherBtn) saveTeacherBtn.textContent = "Save Teacher";
-}
-
-function editTeacher(teacherHash) {
-  const teacher = teachersData.find((item) => item.teacher_hash === teacherHash);
-  if (!teacher || !addTeacherModal) return;
-
-  editingTeacherHash = teacherHash;
-
-  if (teacherFormTitle) teacherFormTitle.textContent = "Edit Teacher";
-  if (saveTeacherBtn) saveTeacherBtn.textContent = "Update Teacher";
-
-  newTeacherHash.value = teacher.teacher_hash || "";
-  newTeacherName.value = teacher.name || "";
-  newTeacherEmail.value = teacher.email || "";
-  newTeacherDepartment.value = teacher.department || "";
-  newTeacherPhone.value = teacher.phone || "";
-
-  if (newTeacherHash) newTeacherHash.disabled = true;
-
-  addTeacherModal.classList.add("show");
-}
-
-function deleteTeacher(teacherHash) {
-  const confirmed = confirm(`Are you sure you want to delete teacher ${teacherHash}?`);
-  if (!confirmed) return;
-
-  teachersData = teachersData.filter((teacher) => teacher.teacher_hash !== teacherHash);
-  renderTeachers(teachersData);
-}
-
-if (teachersTableBody) {
-  fetchTeachers();
-
-  if (teacherSearch) teacherSearch.addEventListener("input", filterTeachers);
-  if (refreshTeachersBtn) refreshTeachersBtn.addEventListener("click", fetchTeachers);
-  if (addTeacherBtn) addTeacherBtn.addEventListener("click", openAddTeacherModal);
-  if (closeTeacherModalBtn) closeTeacherModalBtn.addEventListener("click", closeTeacherModal);
-  if (teacherModalBackdrop) teacherModalBackdrop.addEventListener("click", closeTeacherModal);
-  if (closeAddTeacherBtn) closeAddTeacherBtn.addEventListener("click", closeAddTeacherModal);
-  if (cancelAddTeacher) cancelAddTeacher.addEventListener("click", closeAddTeacherModal);
-  if (addTeacherBackdrop) addTeacherBackdrop.addEventListener("click", closeAddTeacherModal);
-
-  if (addTeacherForm) {
-    addTeacherForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const teacherPayload = {
-        teacher_hash: newTeacherHash.value,
-        name: newTeacherName.value,
-        email: newTeacherEmail.value,
-        department: newTeacherDepartment.value || "Unknown",
-        phone: newTeacherPhone.value || "Unknown"
-      };
-
-      if (editingTeacherHash) {
-        teachersData = teachersData.map((teacher) => {
-          if (teacher.teacher_hash === editingTeacherHash) {
-            return { ...teacher, ...teacherPayload };
-          }
-          return teacher;
-        });
-      } else {
-        teachersData.push({
-          ...teacherPayload,
-          created_at: new Date().toISOString().split("T")[0]
-        });
-      }
-
-      renderTeachers(teachersData);
-      closeAddTeacherModal();
-    });
-  }
-}
+// const studentsTableBody = document.getElementById("studentsTableBody");
+// const studentSearch = document.getElementById("studentSearch");
+// const refreshStudentsBtn = document.getElementById("refreshStudentsBtn");
+// const addStudentBtn = document.getElementById("addStudentBtn");
+
+// const studentViewModal = document.getElementById("studentViewModal");
+// const closeStudentModalBtn = document.getElementById("closeStudentModalBtn");
+// const studentModalBackdrop = document.getElementById("studentModalBackdrop");
+
+// const detailStudentHash = document.getElementById("detailStudentHash");
+// const detailStudentName = document.getElementById("detailStudentName");
+// const detailStudentEmail = document.getElementById("detailStudentEmail");
+// const detailStudentLevel = document.getElementById("detailStudentLevel");
+// const detailStudentClass = document.getElementById("detailStudentClass");
+// const detailStudentParent = document.getElementById("detailStudentParent");
+// const detailStudentCreatedAt = document.getElementById("detailStudentCreatedAt");
+
+// const addStudentModal = document.getElementById("addStudentModal");
+// const addStudentBackdrop = document.getElementById("addStudentBackdrop");
+// const closeAddStudentBtn = document.getElementById("closeAddStudentBtn");
+// const cancelAddStudent = document.getElementById("cancelAddStudent");
+// const addStudentForm = document.getElementById("addStudentForm");
+
+// const studentFormTitle = document.getElementById("studentFormTitle");
+// const saveStudentBtn = document.getElementById("saveStudentBtn");
+
+// const newStudentHash = document.getElementById("newStudentHash");
+// const newStudentName = document.getElementById("newStudentName");
+// const newStudentEmail = document.getElementById("newStudentEmail");
+// const newStudentLevel = document.getElementById("newStudentLevel");
+// const newStudentClass = document.getElementById("newStudentClass");
+// const newStudentParent = document.getElementById("newStudentParent");
+
+// let studentsData = [];
+// let editingStudentHash = null;
+
+// const mockStudents = [
+//   {
+//     student_hash: "STU_001",
+//     name: "Ahmad Ali",
+//     email: "ahmad@example.com",
+//     created_at: "2026-03-01",
+//     level_name: "Grade 9",
+//     class_name: "A",
+//     parent_name: "Ali Ahmad"
+//   },
+//   {
+//     student_hash: "STU_002",
+//     name: "Lina Hassan",
+//     email: "lina@example.com",
+//     created_at: "2026-03-03",
+//     level_name: "Grade 10",
+//     class_name: "B",
+//     parent_name: "Hassan Lina"
+//   }
+// ];
+
+// function renderStudents(data) {
+//   if (!studentsTableBody) return;
+
+//   if (!data || data.length === 0) {
+//     studentsTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="8" class="a-table-empty">No students found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
+
+//   studentsTableBody.innerHTML = data.map((student) => `
+//     <tr>
+//       <td>${formatValue(student.student_hash)}</td>
+//       <td>${formatValue(student.name)}</td>
+//       <td>${formatValue(student.email)}</td>
+//       <td>${formatValue(student.level_name)}</td>
+//       <td>${formatValue(student.class_name)}</td>
+//       <td>${formatValue(student.parent_name)}</td>
+//       <td>${formatValue(student.created_at)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewStudent('${student.student_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editStudent('${student.student_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteStudent('${student.student_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
+
+// async function fetchStudents() {
+//   if (!studentsTableBody) return;
+
+//   studentsTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="8" class="a-table-empty">Loading students...</td>
+//     </tr>
+//   `;
+
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_students", "GET", null, token);
+
+//     if (Array.isArray(response) && response.length > 0) {
+//       studentsData = response.map((student) => ({
+//         student_hash: student.student_hash || "Unknown",
+//         name: student.name || "Unknown",
+//         email: student.email || "Unknown",
+//         created_at: student.created_at || "Unknown",
+//         level_name: student.level_name || "Unknown",
+//         class_name: student.class_name || "Unknown",
+//         parent_name: student.parent_name || "Unknown"
+//       }));
+//     } else {
+//       studentsData = mockStudents;
+//     }
+
+//     renderStudents(studentsData);
+//   } catch (error) {
+//     console.error("Error fetching students:", error);
+//     studentsData = mockStudents;
+//     renderStudents(studentsData);
+//   }
+// }
+
+// function filterStudents() {
+//   if (!studentSearch) return;
+
+//   const query = studentSearch.value.trim().toLowerCase();
+
+//   const filtered = studentsData.filter((student) =>
+//     String(student.student_hash).toLowerCase().includes(query) ||
+//     String(student.name).toLowerCase().includes(query) ||
+//     String(student.email).toLowerCase().includes(query)
+//   );
+
+//   renderStudents(filtered);
+// }
+
+// function viewStudent(studentHash) {
+//   const student = studentsData.find((item) => item.student_hash === studentHash);
+//   if (!student || !studentViewModal) return;
+
+//   detailStudentHash.textContent = formatValue(student.student_hash);
+//   detailStudentName.textContent = formatValue(student.name);
+//   detailStudentEmail.textContent = formatValue(student.email);
+//   detailStudentLevel.textContent = formatValue(student.level_name);
+//   detailStudentClass.textContent = formatValue(student.class_name);
+//   detailStudentParent.textContent = formatValue(student.parent_name);
+//   detailStudentCreatedAt.textContent = formatValue(student.created_at);
+
+//   studentViewModal.classList.add("show");
+// }
+
+// function closeStudentModal() {
+//   if (!studentViewModal) return;
+//   studentViewModal.classList.remove("show");
+// }
+
+// function openAddStudentModal() {
+//   if (!addStudentModal) return;
+
+//   editingStudentHash = null;
+
+//   if (studentFormTitle) studentFormTitle.textContent = "Add Student";
+//   if (saveStudentBtn) saveStudentBtn.textContent = "Save Student";
+//   if (addStudentForm) addStudentForm.reset();
+//   if (newStudentHash) newStudentHash.disabled = false;
+
+//   addStudentModal.classList.add("show");
+// }
+
+// function closeAddStudentModal() {
+//   if (!addStudentModal) return;
+
+//   addStudentModal.classList.remove("show");
+//   editingStudentHash = null;
+
+//   if (addStudentForm) addStudentForm.reset();
+//   if (newStudentHash) newStudentHash.disabled = false;
+//   if (studentFormTitle) studentFormTitle.textContent = "Add Student";
+//   if (saveStudentBtn) saveStudentBtn.textContent = "Save Student";
+// }
+
+// function editStudent(studentHash) {
+//   const student = studentsData.find((item) => item.student_hash === studentHash);
+//   if (!student || !addStudentModal) return;
+
+//   editingStudentHash = studentHash;
+
+//   if (studentFormTitle) studentFormTitle.textContent = "Edit Student";
+//   if (saveStudentBtn) saveStudentBtn.textContent = "Update Student";
+
+//   newStudentHash.value = student.student_hash || "";
+//   newStudentName.value = student.name || "";
+//   newStudentEmail.value = student.email || "";
+//   newStudentLevel.value = student.level_name || "";
+//   newStudentClass.value = student.class_name || "";
+//   newStudentParent.value = student.parent_name || "";
+
+//   if (newStudentHash) newStudentHash.disabled = true;
+
+//   addStudentModal.classList.add("show");
+// }
+
+// function deleteStudent(studentHash) {
+//   const confirmed = confirm(`Are you sure you want to delete student ${studentHash}?`);
+//   if (!confirmed) return;
+
+//   studentsData = studentsData.filter((student) => student.student_hash !== studentHash);
+//   renderStudents(studentsData);
+// }
+
+// if (studentsTableBody) {
+//   fetchStudents();
+
+//   if (studentSearch) studentSearch.addEventListener("input", filterStudents);
+//   if (refreshStudentsBtn) refreshStudentsBtn.addEventListener("click", fetchStudents);
+//   if (addStudentBtn) addStudentBtn.addEventListener("click", openAddStudentModal);
+//   if (closeStudentModalBtn) closeStudentModalBtn.addEventListener("click", closeStudentModal);
+//   if (studentModalBackdrop) studentModalBackdrop.addEventListener("click", closeStudentModal);
+//   if (closeAddStudentBtn) closeAddStudentBtn.addEventListener("click", closeAddStudentModal);
+//   if (cancelAddStudent) cancelAddStudent.addEventListener("click", closeAddStudentModal);
+//   if (addStudentBackdrop) addStudentBackdrop.addEventListener("click", closeAddStudentModal);
+
+//   if (addStudentForm) {
+//     addStudentForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
+
+//       const studentPayload = {
+//         student_hash: newStudentHash.value,
+//         name: newStudentName.value,
+//         email: newStudentEmail.value,
+//         level_name: newStudentLevel.value || "Unknown",
+//         class_name: newStudentClass.value || "Unknown",
+//         parent_name: newStudentParent.value || "Unknown"
+//       };
+
+//       if (editingStudentHash) {
+//         studentsData = studentsData.map((student) => {
+//           if (student.student_hash === editingStudentHash) {
+//             return { ...student, ...studentPayload };
+//           }
+//           return student;
+//         });
+//       } else {
+//         studentsData.push({
+//           ...studentPayload,
+//           created_at: new Date().toISOString().split("T")[0]
+//         });
+//       }
+
+//       renderStudents(studentsData);
+//       closeAddStudentModal();
+//     });
+//   }
+// }
+
+// // =========================
+// // Teachers Page
+// // =========================
+// const teachersTableBody = document.getElementById("teachersTableBody");
+// const teacherSearch = document.getElementById("teacherSearch");
+// const refreshTeachersBtn = document.getElementById("refreshTeachersBtn");
+// const addTeacherBtn = document.getElementById("addTeacherBtn");
+
+// const teacherViewModal = document.getElementById("teacherViewModal");
+// const closeTeacherModalBtn = document.getElementById("closeTeacherModalBtn");
+// const teacherModalBackdrop = document.getElementById("teacherModalBackdrop");
+
+// const detailTeacherHash = document.getElementById("detailTeacherHash");
+// const detailTeacherName = document.getElementById("detailTeacherName");
+// const detailTeacherEmail = document.getElementById("detailTeacherEmail");
+// const detailTeacherDepartment = document.getElementById("detailTeacherDepartment");
+// const detailTeacherPhone = document.getElementById("detailTeacherPhone");
+// const detailTeacherCreatedAt = document.getElementById("detailTeacherCreatedAt");
+
+// const addTeacherModal = document.getElementById("addTeacherModal");
+// const addTeacherBackdrop = document.getElementById("addTeacherBackdrop");
+// const closeAddTeacherBtn = document.getElementById("closeAddTeacherBtn");
+// const cancelAddTeacher = document.getElementById("cancelAddTeacher");
+// const addTeacherForm = document.getElementById("addTeacherForm");
+
+// const teacherFormTitle = document.getElementById("teacherFormTitle");
+// const saveTeacherBtn = document.getElementById("saveTeacherBtn");
+
+// const newTeacherHash = document.getElementById("newTeacherHash");
+// const newTeacherName = document.getElementById("newTeacherName");
+// const newTeacherEmail = document.getElementById("newTeacherEmail");
+// const newTeacherDepartment = document.getElementById("newTeacherDepartment");
+// const newTeacherPhone = document.getElementById("newTeacherPhone");
+
+// let teachersData = [];
+// let editingTeacherHash = null;
+
+// const mockTeachers = [
+//   {
+//     teacher_hash: "TCH_001",
+//     name: "Maya Haddad",
+//     email: "maya@example.com",
+//     department: "Math",
+//     phone: "03 111 222",
+//     created_at: "2026-03-02"
+//   },
+//   {
+//     teacher_hash: "TCH_002",
+//     name: "Rami Saleh",
+//     email: "rami@example.com",
+//     department: "Physics",
+//     phone: "70 555 666",
+//     created_at: "2026-03-04"
+//   }
+// ];
+
+// function renderTeachers(data) {
+//   if (!teachersTableBody) return;
+
+//   if (!data || data.length === 0) {
+//     teachersTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="7" class="a-table-empty">No teachers found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
+
+//   teachersTableBody.innerHTML = data.map((teacher) => `
+//     <tr>
+//       <td>${formatValue(teacher.teacher_hash)}</td>
+//       <td>${formatValue(teacher.name)}</td>
+//       <td>${formatValue(teacher.email)}</td>
+//       <td>${formatValue(teacher.department)}</td>
+//       <td>${formatValue(teacher.phone)}</td>
+//       <td>${formatValue(teacher.created_at)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewTeacher('${teacher.teacher_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editTeacher('${teacher.teacher_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteTeacher('${teacher.teacher_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
+
+// async function fetchTeachers() {
+//   if (!teachersTableBody) return;
+
+//   teachersTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="7" class="a-table-empty">Loading teachers...</td>
+//     </tr>
+//   `;
+
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_teachers", "GET", null, token);
+
+//     if (Array.isArray(response) && response.length > 0) {
+//       teachersData = response.map((teacher) => ({
+//         teacher_hash: teacher.teacher_hash || "Unknown",
+//         name: teacher.name || "Unknown",
+//         email: teacher.email || "Unknown",
+//         department: teacher.department || "Unknown",
+//         phone: teacher.phone || "Unknown",
+//         created_at: teacher.created_at || "Unknown"
+//       }));
+//     } else {
+//       teachersData = mockTeachers;
+//     }
+
+//     renderTeachers(teachersData);
+//   } catch (error) {
+//     console.error("Error fetching teachers:", error);
+//     teachersData = mockTeachers;
+//     renderTeachers(teachersData);
+//   }
+// }
+
+// function filterTeachers() {
+//   if (!teacherSearch) return;
+
+//   const query = teacherSearch.value.trim().toLowerCase();
+
+//   const filtered = teachersData.filter((teacher) =>
+//     String(teacher.teacher_hash).toLowerCase().includes(query) ||
+//     String(teacher.name).toLowerCase().includes(query) ||
+//     String(teacher.email).toLowerCase().includes(query)
+//   );
+
+//   renderTeachers(filtered);
+// }
+
+// function viewTeacher(teacherHash) {
+//   const teacher = teachersData.find((item) => item.teacher_hash === teacherHash);
+//   if (!teacher || !teacherViewModal) return;
+
+//   detailTeacherHash.textContent = formatValue(teacher.teacher_hash);
+//   detailTeacherName.textContent = formatValue(teacher.name);
+//   detailTeacherEmail.textContent = formatValue(teacher.email);
+//   detailTeacherDepartment.textContent = formatValue(teacher.department);
+//   detailTeacherPhone.textContent = formatValue(teacher.phone);
+//   detailTeacherCreatedAt.textContent = formatValue(teacher.created_at);
+
+//   teacherViewModal.classList.add("show");
+// }
+
+// function closeTeacherModal() {
+//   if (!teacherViewModal) return;
+//   teacherViewModal.classList.remove("show");
+// }
+
+// function openAddTeacherModal() {
+//   if (!addTeacherModal) return;
+
+//   editingTeacherHash = null;
+
+//   if (teacherFormTitle) teacherFormTitle.textContent = "Add Teacher";
+//   if (saveTeacherBtn) saveTeacherBtn.textContent = "Save Teacher";
+//   if (addTeacherForm) addTeacherForm.reset();
+//   if (newTeacherHash) newTeacherHash.disabled = false;
+
+//   addTeacherModal.classList.add("show");
+// }
+
+// function closeAddTeacherModal() {
+//   if (!addTeacherModal) return;
+
+//   addTeacherModal.classList.remove("show");
+//   editingTeacherHash = null;
+
+//   if (addTeacherForm) addTeacherForm.reset();
+//   if (newTeacherHash) newTeacherHash.disabled = false;
+//   if (teacherFormTitle) teacherFormTitle.textContent = "Add Teacher";
+//   if (saveTeacherBtn) saveTeacherBtn.textContent = "Save Teacher";
+// }
+
+// function editTeacher(teacherHash) {
+//   const teacher = teachersData.find((item) => item.teacher_hash === teacherHash);
+//   if (!teacher || !addTeacherModal) return;
+
+//   editingTeacherHash = teacherHash;
+
+//   if (teacherFormTitle) teacherFormTitle.textContent = "Edit Teacher";
+//   if (saveTeacherBtn) saveTeacherBtn.textContent = "Update Teacher";
+
+//   newTeacherHash.value = teacher.teacher_hash || "";
+//   newTeacherName.value = teacher.name || "";
+//   newTeacherEmail.value = teacher.email || "";
+//   newTeacherDepartment.value = teacher.department || "";
+//   newTeacherPhone.value = teacher.phone || "";
+
+//   if (newTeacherHash) newTeacherHash.disabled = true;
+
+//   addTeacherModal.classList.add("show");
+// }
+
+// function deleteTeacher(teacherHash) {
+//   const confirmed = confirm(`Are you sure you want to delete teacher ${teacherHash}?`);
+//   if (!confirmed) return;
+
+//   teachersData = teachersData.filter((teacher) => teacher.teacher_hash !== teacherHash);
+//   renderTeachers(teachersData);
+// }
+
+// if (teachersTableBody) {
+//   fetchTeachers();
+
+//   if (teacherSearch) teacherSearch.addEventListener("input", filterTeachers);
+//   if (refreshTeachersBtn) refreshTeachersBtn.addEventListener("click", fetchTeachers);
+//   if (addTeacherBtn) addTeacherBtn.addEventListener("click", openAddTeacherModal);
+//   if (closeTeacherModalBtn) closeTeacherModalBtn.addEventListener("click", closeTeacherModal);
+//   if (teacherModalBackdrop) teacherModalBackdrop.addEventListener("click", closeTeacherModal);
+//   if (closeAddTeacherBtn) closeAddTeacherBtn.addEventListener("click", closeAddTeacherModal);
+//   if (cancelAddTeacher) cancelAddTeacher.addEventListener("click", closeAddTeacherModal);
+//   if (addTeacherBackdrop) addTeacherBackdrop.addEventListener("click", closeAddTeacherModal);
+
+//   if (addTeacherForm) {
+//     addTeacherForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
+
+//       const teacherPayload = {
+//         teacher_hash: newTeacherHash.value,
+//         name: newTeacherName.value,
+//         email: newTeacherEmail.value,
+//         department: newTeacherDepartment.value || "Unknown",
+//         phone: newTeacherPhone.value || "Unknown"
+//       };
+
+//       if (editingTeacherHash) {
+//         teachersData = teachersData.map((teacher) => {
+//           if (teacher.teacher_hash === editingTeacherHash) {
+//             return { ...teacher, ...teacherPayload };
+//           }
+//           return teacher;
+//         });
+//       } else {
+//         teachersData.push({
+//           ...teacherPayload,
+//           created_at: new Date().toISOString().split("T")[0]
+//         });
+//       }
+
+//       renderTeachers(teachersData);
+//       closeAddTeacherModal();
+//     });
+//   }
+// }
 
 // =========================
 // Parents Page
 // =========================
-const parentsTableBody = document.getElementById("parentsTableBody");
-const parentSearch = document.getElementById("parentSearch");
-const refreshParentsBtn = document.getElementById("refreshParentsBtn");
-const addParentBtn = document.getElementById("addParentBtn");
+// const parentsTableBody = document.getElementById("parentsTableBody");
+// const parentSearch = document.getElementById("parentSearch");
+// const refreshParentsBtn = document.getElementById("refreshParentsBtn");
+// const addParentBtn = document.getElementById("addParentBtn");
 
-const parentViewModal = document.getElementById("parentViewModal");
-const closeParentModalBtn = document.getElementById("closeParentModalBtn");
-const parentModalBackdrop = document.getElementById("parentModalBackdrop");
+// const parentViewModal = document.getElementById("parentViewModal");
+// const closeParentModalBtn = document.getElementById("closeParentModalBtn");
+// const parentModalBackdrop = document.getElementById("parentModalBackdrop");
 
-const detailParentHash = document.getElementById("detailParentHash");
-const detailParentName = document.getElementById("detailParentName");
-const detailParentEmail = document.getElementById("detailParentEmail");
-const detailParentPhone = document.getElementById("detailParentPhone");
-const detailParentCreatedAt = document.getElementById("detailParentCreatedAt");
+// const detailParentHash = document.getElementById("detailParentHash");
+// const detailParentName = document.getElementById("detailParentName");
+// const detailParentEmail = document.getElementById("detailParentEmail");
+// const detailParentPhone = document.getElementById("detailParentPhone");
+// const detailParentCreatedAt = document.getElementById("detailParentCreatedAt");
 
-const addParentModal = document.getElementById("addParentModal");
-const addParentBackdrop = document.getElementById("addParentBackdrop");
-const closeAddParentBtn = document.getElementById("closeAddParentBtn");
-const cancelAddParent = document.getElementById("cancelAddParent");
-const addParentForm = document.getElementById("addParentForm");
+// const addParentModal = document.getElementById("addParentModal");
+// const addParentBackdrop = document.getElementById("addParentBackdrop");
+// const closeAddParentBtn = document.getElementById("closeAddParentBtn");
+// const cancelAddParent = document.getElementById("cancelAddParent");
+// const addParentForm = document.getElementById("addParentForm");
 
-const parentFormTitle = document.getElementById("parentFormTitle");
-const saveParentBtn = document.getElementById("saveParentBtn");
+// const parentFormTitle = document.getElementById("parentFormTitle");
+// const saveParentBtn = document.getElementById("saveParentBtn");
 
-const newParentHash = document.getElementById("newParentHash");
-const newParentName = document.getElementById("newParentName");
-const newParentEmail = document.getElementById("newParentEmail");
-const newParentPhone = document.getElementById("newParentPhone");
+// const newParentHash = document.getElementById("newParentHash");
+// const newParentName = document.getElementById("newParentName");
+// const newParentEmail = document.getElementById("newParentEmail");
+// const newParentPhone = document.getElementById("newParentPhone");
 
-let parentsData = [];
-let editingParentHash = null;
+// let parentsData = [];
+// let editingParentHash = null;
 
-const mockParents = [
-  {
-    parent_hash: "PAR_001",
-    name: "Mohammad Ali",
-    email: "m.ali@example.com",
-    phone: "03 888 111",
-    created_at: "2026-03-01"
-  },
-  {
-    parent_hash: "PAR_002",
-    name: "Fatima Hassan",
-    email: "fatima@example.com",
-    phone: "70 222 333",
-    created_at: "2026-03-04"
-  }
-];
+// const mockParents = [
+//   {
+//     parent_hash: "PAR_001",
+//     name: "Mohammad Ali",
+//     email: "m.ali@example.com",
+//     phone: "03 888 111",
+//     created_at: "2026-03-01"
+//   },
+//   {
+//     parent_hash: "PAR_002",
+//     name: "Fatima Hassan",
+//     email: "fatima@example.com",
+//     phone: "70 222 333",
+//     created_at: "2026-03-04"
+//   }
+// ];
 
-function renderParents(data) {
-  if (!parentsTableBody) return;
+// function renderParents(data) {
+//   if (!parentsTableBody) return;
 
-  if (!data || data.length === 0) {
-    parentsTableBody.innerHTML = `
-      <tr>
-        <td colspan="6" class="a-table-empty">No parents found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     parentsTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="6" class="a-table-empty">No parents found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  parentsTableBody.innerHTML = data.map((parent) => `
-    <tr>
-      <td>${formatValue(parent.parent_hash)}</td>
-      <td>${formatValue(parent.name)}</td>
-      <td>${formatValue(parent.email)}</td>
-      <td>${formatValue(parent.phone)}</td>
-      <td>${formatValue(parent.created_at)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewParent('${parent.parent_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editParent('${parent.parent_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteParent('${parent.parent_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   parentsTableBody.innerHTML = data.map((parent) => `
+//     <tr>
+//       <td>${formatValue(parent.parent_hash)}</td>
+//       <td>${formatValue(parent.name)}</td>
+//       <td>${formatValue(parent.email)}</td>
+//       <td>${formatValue(parent.phone)}</td>
+//       <td>${formatValue(parent.created_at)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewParent('${parent.parent_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editParent('${parent.parent_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteParent('${parent.parent_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchParents() {
-  if (!parentsTableBody) return;
+// async function fetchParents() {
+//   if (!parentsTableBody) return;
 
-  parentsTableBody.innerHTML = `
-    <tr>
-      <td colspan="6" class="a-table-empty">Loading parents...</td>
-    </tr>
-  `;
+//   parentsTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="6" class="a-table-empty">Loading parents...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_parents", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_parents", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      parentsData = response.map((parent) => ({
-        parent_hash: parent.parent_hash || "Unknown",
-        name: parent.name || "Unknown",
-        email: parent.email || "Unknown",
-        phone: parent.phone || "Unknown",
-        created_at: parent.created_at || "Unknown"
-      }));
-    } else {
-      parentsData = mockParents;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       parentsData = response.map((parent) => ({
+//         parent_hash: parent.parent_hash || "Unknown",
+//         name: parent.name || "Unknown",
+//         email: parent.email || "Unknown",
+//         phone: parent.phone || "Unknown",
+//         created_at: parent.created_at || "Unknown"
+//       }));
+//     } else {
+//       parentsData = mockParents;
+//     }
 
-    renderParents(parentsData);
-  } catch (error) {
-    console.error("Error fetching parents:", error);
-    parentsData = mockParents;
-    renderParents(parentsData);
-  }
-}
+//     renderParents(parentsData);
+//   } catch (error) {
+//     console.error("Error fetching parents:", error);
+//     parentsData = mockParents;
+//     renderParents(parentsData);
+//   }
+// }
 
-function filterParents() {
-  if (!parentSearch) return;
+// function filterParents() {
+//   if (!parentSearch) return;
 
-  const query = parentSearch.value.trim().toLowerCase();
+//   const query = parentSearch.value.trim().toLowerCase();
 
-  const filtered = parentsData.filter((parent) =>
-    String(parent.parent_hash).toLowerCase().includes(query) ||
-    String(parent.name).toLowerCase().includes(query) ||
-    String(parent.email).toLowerCase().includes(query)
-  );
+//   const filtered = parentsData.filter((parent) =>
+//     String(parent.parent_hash).toLowerCase().includes(query) ||
+//     String(parent.name).toLowerCase().includes(query) ||
+//     String(parent.email).toLowerCase().includes(query)
+//   );
 
-  renderParents(filtered);
-}
+//   renderParents(filtered);
+// }
 
-function viewParent(parentHash) {
-  const parent = parentsData.find((item) => item.parent_hash === parentHash);
-  if (!parent || !parentViewModal) return;
+// function viewParent(parentHash) {
+//   const parent = parentsData.find((item) => item.parent_hash === parentHash);
+//   if (!parent || !parentViewModal) return;
 
-  detailParentHash.textContent = formatValue(parent.parent_hash);
-  detailParentName.textContent = formatValue(parent.name);
-  detailParentEmail.textContent = formatValue(parent.email);
-  detailParentPhone.textContent = formatValue(parent.phone);
-  detailParentCreatedAt.textContent = formatValue(parent.created_at);
+//   detailParentHash.textContent = formatValue(parent.parent_hash);
+//   detailParentName.textContent = formatValue(parent.name);
+//   detailParentEmail.textContent = formatValue(parent.email);
+//   detailParentPhone.textContent = formatValue(parent.phone);
+//   detailParentCreatedAt.textContent = formatValue(parent.created_at);
 
-  parentViewModal.classList.add("show");
-}
+//   parentViewModal.classList.add("show");
+// }
 
-function closeParentModal() {
-  if (!parentViewModal) return;
-  parentViewModal.classList.remove("show");
-}
+// function closeParentModal() {
+//   if (!parentViewModal) return;
+//   parentViewModal.classList.remove("show");
+// }
 
-function openAddParentModal() {
-  if (!addParentModal) return;
+// function openAddParentModal() {
+//   if (!addParentModal) return;
 
-  editingParentHash = null;
+//   editingParentHash = null;
 
-  if (parentFormTitle) parentFormTitle.textContent = "Add Parent";
-  if (saveParentBtn) saveParentBtn.textContent = "Save Parent";
-  if (addParentForm) addParentForm.reset();
-  if (newParentHash) newParentHash.disabled = false;
+//   if (parentFormTitle) parentFormTitle.textContent = "Add Parent";
+//   if (saveParentBtn) saveParentBtn.textContent = "Save Parent";
+//   if (addParentForm) addParentForm.reset();
+//   if (newParentHash) newParentHash.disabled = false;
 
-  addParentModal.classList.add("show");
-}
+//   addParentModal.classList.add("show");
+// }
 
-function closeAddParentModal() {
-  if (!addParentModal) return;
+// function closeAddParentModal() {
+//   if (!addParentModal) return;
 
-  addParentModal.classList.remove("show");
-  editingParentHash = null;
+//   addParentModal.classList.remove("show");
+//   editingParentHash = null;
 
-  if (addParentForm) addParentForm.reset();
-  if (newParentHash) newParentHash.disabled = false;
-  if (parentFormTitle) parentFormTitle.textContent = "Add Parent";
-  if (saveParentBtn) saveParentBtn.textContent = "Save Parent";
-}
+//   if (addParentForm) addParentForm.reset();
+//   if (newParentHash) newParentHash.disabled = false;
+//   if (parentFormTitle) parentFormTitle.textContent = "Add Parent";
+//   if (saveParentBtn) saveParentBtn.textContent = "Save Parent";
+// }
 
-function editParent(parentHash) {
-  const parent = parentsData.find((item) => item.parent_hash === parentHash);
-  if (!parent || !addParentModal) return;
+// function editParent(parentHash) {
+//   const parent = parentsData.find((item) => item.parent_hash === parentHash);
+//   if (!parent || !addParentModal) return;
 
-  editingParentHash = parentHash;
+//   editingParentHash = parentHash;
 
-  if (parentFormTitle) parentFormTitle.textContent = "Edit Parent";
-  if (saveParentBtn) saveParentBtn.textContent = "Update Parent";
+//   if (parentFormTitle) parentFormTitle.textContent = "Edit Parent";
+//   if (saveParentBtn) saveParentBtn.textContent = "Update Parent";
 
-  newParentHash.value = parent.parent_hash || "";
-  newParentName.value = parent.name || "";
-  newParentEmail.value = parent.email || "";
-  newParentPhone.value = parent.phone || "";
+//   newParentHash.value = parent.parent_hash || "";
+//   newParentName.value = parent.name || "";
+//   newParentEmail.value = parent.email || "";
+//   newParentPhone.value = parent.phone || "";
 
-  if (newParentHash) newParentHash.disabled = true;
+//   if (newParentHash) newParentHash.disabled = true;
 
-  addParentModal.classList.add("show");
-}
+//   addParentModal.classList.add("show");
+// }
 
-function deleteParent(parentHash) {
-  const confirmed = confirm(`Are you sure you want to delete parent ${parentHash}?`);
-  if (!confirmed) return;
+// function deleteParent(parentHash) {
+//   const confirmed = confirm(`Are you sure you want to delete parent ${parentHash}?`);
+//   if (!confirmed) return;
 
-  parentsData = parentsData.filter((parent) => parent.parent_hash !== parentHash);
-  renderParents(parentsData);
-}
+//   parentsData = parentsData.filter((parent) => parent.parent_hash !== parentHash);
+//   renderParents(parentsData);
+// }
 
-if (parentsTableBody) {
-  fetchParents();
+// if (parentsTableBody) {
+//   fetchParents();
 
-  if (parentSearch) parentSearch.addEventListener("input", filterParents);
-  if (refreshParentsBtn) refreshParentsBtn.addEventListener("click", fetchParents);
-  if (addParentBtn) addParentBtn.addEventListener("click", openAddParentModal);
-  if (closeParentModalBtn) closeParentModalBtn.addEventListener("click", closeParentModal);
-  if (parentModalBackdrop) parentModalBackdrop.addEventListener("click", closeParentModal);
-  if (closeAddParentBtn) closeAddParentBtn.addEventListener("click", closeAddParentModal);
-  if (cancelAddParent) cancelAddParent.addEventListener("click", closeAddParentModal);
-  if (addParentBackdrop) addParentBackdrop.addEventListener("click", closeAddParentModal);
+//   if (parentSearch) parentSearch.addEventListener("input", filterParents);
+//   if (refreshParentsBtn) refreshParentsBtn.addEventListener("click", fetchParents);
+//   if (addParentBtn) addParentBtn.addEventListener("click", openAddParentModal);
+//   if (closeParentModalBtn) closeParentModalBtn.addEventListener("click", closeParentModal);
+//   if (parentModalBackdrop) parentModalBackdrop.addEventListener("click", closeParentModal);
+//   if (closeAddParentBtn) closeAddParentBtn.addEventListener("click", closeAddParentModal);
+//   if (cancelAddParent) cancelAddParent.addEventListener("click", closeAddParentModal);
+//   if (addParentBackdrop) addParentBackdrop.addEventListener("click", closeAddParentModal);
 
-  if (addParentForm) {
-    addParentForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+//   if (addParentForm) {
+//     addParentForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
 
-      const parentPayload = {
-        parent_hash: newParentHash.value,
-        name: newParentName.value,
-        email: newParentEmail.value,
-        phone: newParentPhone.value || "Unknown"
-      };
+//       const parentPayload = {
+//         parent_hash: newParentHash.value,
+//         name: newParentName.value,
+//         email: newParentEmail.value,
+//         phone: newParentPhone.value || "Unknown"
+//       };
 
-      if (editingParentHash) {
-        parentsData = parentsData.map((parent) => {
-          if (parent.parent_hash === editingParentHash) {
-            return { ...parent, ...parentPayload };
-          }
-          return parent;
-        });
-      } else {
-        parentsData.push({
-          ...parentPayload,
-          created_at: new Date().toISOString().split("T")[0]
-        });
-      }
+//       if (editingParentHash) {
+//         parentsData = parentsData.map((parent) => {
+//           if (parent.parent_hash === editingParentHash) {
+//             return { ...parent, ...parentPayload };
+//           }
+//           return parent;
+//         });
+//       } else {
+//         parentsData.push({
+//           ...parentPayload,
+//           created_at: new Date().toISOString().split("T")[0]
+//         });
+//       }
 
-      renderParents(parentsData);
-      closeAddParentModal();
-    });
-  }
-}
+//       renderParents(parentsData);
+//       closeAddParentModal();
+//     });
+//   }
+// }
 // =========================
 // Sections Page
 // =========================
-const sectionsTableBody = document.getElementById("sectionsTableBody");
-const sectionSearch = document.getElementById("sectionSearch");
-const refreshSectionsBtn = document.getElementById("refreshSectionsBtn");
-const addSectionBtn = document.getElementById("addSectionBtn");
+// const sectionsTableBody = document.getElementById("sectionsTableBody");
+// const sectionSearch = document.getElementById("sectionSearch");
+// const refreshSectionsBtn = document.getElementById("refreshSectionsBtn");
+// const addSectionBtn = document.getElementById("addSectionBtn");
 
-const sectionViewModal = document.getElementById("sectionViewModal");
-const closeSectionModalBtn = document.getElementById("closeSectionModalBtn");
-const sectionModalBackdrop = document.getElementById("sectionModalBackdrop");
+// const sectionViewModal = document.getElementById("sectionViewModal");
+// const closeSectionModalBtn = document.getElementById("closeSectionModalBtn");
+// const sectionModalBackdrop = document.getElementById("sectionModalBackdrop");
 
-const detailSectionHash = document.getElementById("detailSectionHash");
-const detailOfferingHash = document.getElementById("detailOfferingHash");
-const detailSectionCode = document.getElementById("detailSectionCode");
-const detailSectionTeacherHash = document.getElementById("detailSectionTeacherHash");
-const detailSectionTeacherName = document.getElementById("detailSectionTeacherName");
-const detailCapacity = document.getElementById("detailCapacity");
-const detailMode = document.getElementById("detailMode");
+// const detailSectionHash = document.getElementById("detailSectionHash");
+// const detailOfferingHash = document.getElementById("detailOfferingHash");
+// const detailSectionCode = document.getElementById("detailSectionCode");
+// const detailSectionTeacherHash = document.getElementById("detailSectionTeacherHash");
+// const detailSectionTeacherName = document.getElementById("detailSectionTeacherName");
+// const detailCapacity = document.getElementById("detailCapacity");
+// const detailMode = document.getElementById("detailMode");
 
-const addSectionModal = document.getElementById("addSectionModal");
-const addSectionBackdrop = document.getElementById("addSectionBackdrop");
-const closeAddSectionBtn = document.getElementById("closeAddSectionBtn");
-const cancelAddSection = document.getElementById("cancelAddSection");
-const addSectionForm = document.getElementById("addSectionForm");
+// const addSectionModal = document.getElementById("addSectionModal");
+// const addSectionBackdrop = document.getElementById("addSectionBackdrop");
+// const closeAddSectionBtn = document.getElementById("closeAddSectionBtn");
+// const cancelAddSection = document.getElementById("cancelAddSection");
+// const addSectionForm = document.getElementById("addSectionForm");
 
-const sectionFormTitle = document.getElementById("sectionFormTitle");
-const saveSectionBtn = document.getElementById("saveSectionBtn");
+// const sectionFormTitle = document.getElementById("sectionFormTitle");
+// const saveSectionBtn = document.getElementById("saveSectionBtn");
 
-const newSectionHashInput = document.getElementById("newSectionHash");
-const newSectionOfferingHashInput = document.getElementById("newOfferingHash");
-const newSectionCodeInput = document.getElementById("newSectionCode");
-const newSectionTeacherHashInput = document.getElementById("newSectionTeacherHash");
-const newSectionCapacityInput = document.getElementById("newCapacity");
-const newSectionModeInput = document.getElementById("newMode");
+// const newSectionHashInput = document.getElementById("newSectionHash");
+// const newSectionOfferingHashInput = document.getElementById("newOfferingHash");
+// const newSectionCodeInput = document.getElementById("newSectionCode");
+// const newSectionTeacherHashInput = document.getElementById("newSectionTeacherHash");
+// const newSectionCapacityInput = document.getElementById("newCapacity");
+// const newSectionModeInput = document.getElementById("newMode");
 
-let sectionsData = [];
-let editingSectionHash = null;
+// let sectionsData = [];
+// let editingSectionHash = null;
 
-const mockSections = [
-  {
-    section_hash: "SEC_001",
-    offering_hash: "OFF_001",
-    section_code: "A",
-    teacher_hash: "TCH_001",
-    teacher_first_name: "Maya",
-    teacher_last_name: "Haddad",
-    capacity: 30,
-    mode: "In Person"
-  },
-  {
-    section_hash: "SEC_002",
-    offering_hash: "OFF_002",
-    section_code: "B",
-    teacher_hash: "TCH_002",
-    teacher_first_name: "Rami",
-    teacher_last_name: "Saleh",
-    capacity: 25,
-    mode: "Online"
-  }
-];
+// const mockSections = [
+//   {
+//     section_hash: "SEC_001",
+//     offering_hash: "OFF_001",
+//     section_code: "A",
+//     teacher_hash: "TCH_001",
+//     teacher_first_name: "Maya",
+//     teacher_last_name: "Haddad",
+//     capacity: 30,
+//     mode: "In Person"
+//   },
+//   {
+//     section_hash: "SEC_002",
+//     offering_hash: "OFF_002",
+//     section_code: "B",
+//     teacher_hash: "TCH_002",
+//     teacher_first_name: "Rami",
+//     teacher_last_name: "Saleh",
+//     capacity: 25,
+//     mode: "Online"
+//   }
+// ];
 
-function renderSections(data) {
-  if (!sectionsTableBody) return;
+// function renderSections(data) {
+//   if (!sectionsTableBody) return;
 
-  if (!data || data.length === 0) {
-    sectionsTableBody.innerHTML = `
-      <tr>
-        <td colspan="8" class="a-table-empty">No sections found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     sectionsTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="8" class="a-table-empty">No sections found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  sectionsTableBody.innerHTML = data.map((section) => `
-    <tr>
-      <td>${formatValue(section.section_hash)}</td>
-      <td>${formatValue(section.offering_hash)}</td>
-      <td>${formatValue(section.section_code)}</td>
-      <td>${formatValue(section.teacher_hash)}</td>
-      <td>${formatValue(`${section.teacher_first_name || "Unknown"} ${section.teacher_last_name || ""}`.trim())}</td>
-      <td>${formatValue(section.capacity)}</td>
-      <td>${formatValue(section.mode)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewSection('${section.section_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editSection('${section.section_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteSection('${section.section_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   sectionsTableBody.innerHTML = data.map((section) => `
+//     <tr>
+//       <td>${formatValue(section.section_hash)}</td>
+//       <td>${formatValue(section.offering_hash)}</td>
+//       <td>${formatValue(section.section_code)}</td>
+//       <td>${formatValue(section.teacher_hash)}</td>
+//       <td>${formatValue(`${section.teacher_first_name || "Unknown"} ${section.teacher_last_name || ""}`.trim())}</td>
+//       <td>${formatValue(section.capacity)}</td>
+//       <td>${formatValue(section.mode)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewSection('${section.section_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editSection('${section.section_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteSection('${section.section_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchSections() {
-  if (!sectionsTableBody) return;
+// async function fetchSections() {
+//   if (!sectionsTableBody) return;
 
-  sectionsTableBody.innerHTML = `
-    <tr>
-      <td colspan="8" class="a-table-empty">Loading sections...</td>
-    </tr>
-  `;
+//   sectionsTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="8" class="a-table-empty">Loading sections...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_course_sections", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_course_sections", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      sectionsData = response.map((section) => ({
-        section_hash: section.section_hash || "Unknown",
-        offering_hash: section.offering_hash || "Unknown",
-        section_code: section.section_code || "Unknown",
-        teacher_hash: section.teacher_hash || "Unknown",
-        teacher_first_name: section.teacher_first_name || "Unknown",
-        teacher_last_name: section.teacher_last_name || "",
-        capacity: section.capacity ?? "Unknown",
-        mode: section.mode || "Unknown"
-      }));
-    } else {
-      sectionsData = mockSections;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       sectionsData = response.map((section) => ({
+//         section_hash: section.section_hash || "Unknown",
+//         offering_hash: section.offering_hash || "Unknown",
+//         section_code: section.section_code || "Unknown",
+//         teacher_hash: section.teacher_hash || "Unknown",
+//         teacher_first_name: section.teacher_first_name || "Unknown",
+//         teacher_last_name: section.teacher_last_name || "",
+//         capacity: section.capacity ?? "Unknown",
+//         mode: section.mode || "Unknown"
+//       }));
+//     } else {
+//       sectionsData = mockSections;
+//     }
 
-    renderSections(sectionsData);
-  } catch (error) {
-    console.error("Error fetching sections:", error);
-    sectionsData = mockSections;
-    renderSections(sectionsData);
-  }
-}
+//     renderSections(sectionsData);
+//   } catch (error) {
+//     console.error("Error fetching sections:", error);
+//     sectionsData = mockSections;
+//     renderSections(sectionsData);
+//   }
+// }
 
-function filterSections() {
-  if (!sectionSearch) return;
+// function filterSections() {
+//   if (!sectionSearch) return;
 
-  const query = sectionSearch.value.trim().toLowerCase();
+//   const query = sectionSearch.value.trim().toLowerCase();
 
-  const filtered = sectionsData.filter((section) =>
-    String(section.section_hash).toLowerCase().includes(query) ||
-    String(section.section_code).toLowerCase().includes(query) ||
-    String(section.teacher_hash).toLowerCase().includes(query) ||
-    String(section.teacher_first_name).toLowerCase().includes(query) ||
-    String(section.teacher_last_name).toLowerCase().includes(query)
-  );
+//   const filtered = sectionsData.filter((section) =>
+//     String(section.section_hash).toLowerCase().includes(query) ||
+//     String(section.section_code).toLowerCase().includes(query) ||
+//     String(section.teacher_hash).toLowerCase().includes(query) ||
+//     String(section.teacher_first_name).toLowerCase().includes(query) ||
+//     String(section.teacher_last_name).toLowerCase().includes(query)
+//   );
 
-  renderSections(filtered);
-}
+//   renderSections(filtered);
+// }
 
-function viewSection(sectionHash) {
-  const section = sectionsData.find((item) => item.section_hash === sectionHash);
-  if (!section || !sectionViewModal) return;
+// function viewSection(sectionHash) {
+//   const section = sectionsData.find((item) => item.section_hash === sectionHash);
+//   if (!section || !sectionViewModal) return;
 
-  detailSectionHash.textContent = formatValue(section.section_hash);
-  detailOfferingHash.textContent = formatValue(section.offering_hash);
-  detailSectionCode.textContent = formatValue(section.section_code);
-  detailSectionTeacherHash.textContent = formatValue(section.teacher_hash);
-  detailSectionTeacherName.textContent = formatValue(
-    `${section.teacher_first_name || "Unknown"} ${section.teacher_last_name || ""}`.trim()
-  );
-  detailCapacity.textContent = formatValue(section.capacity);
-  detailMode.textContent = formatValue(section.mode);
+//   detailSectionHash.textContent = formatValue(section.section_hash);
+//   detailOfferingHash.textContent = formatValue(section.offering_hash);
+//   detailSectionCode.textContent = formatValue(section.section_code);
+//   detailSectionTeacherHash.textContent = formatValue(section.teacher_hash);
+//   detailSectionTeacherName.textContent = formatValue(
+//     `${section.teacher_first_name || "Unknown"} ${section.teacher_last_name || ""}`.trim()
+//   );
+//   detailCapacity.textContent = formatValue(section.capacity);
+//   detailMode.textContent = formatValue(section.mode);
 
-  sectionViewModal.classList.add("show");
-}
+//   sectionViewModal.classList.add("show");
+// }
 
-function closeSectionModal() {
-  if (!sectionViewModal) return;
-  sectionViewModal.classList.remove("show");
-}
+// function closeSectionModal() {
+//   if (!sectionViewModal) return;
+//   sectionViewModal.classList.remove("show");
+// }
 
-function openAddSectionModal() {
-  if (!addSectionModal) return;
+// function openAddSectionModal() {
+//   if (!addSectionModal) return;
 
-  editingSectionHash = null;
+//   editingSectionHash = null;
 
-  if (sectionFormTitle) sectionFormTitle.textContent = "Add Section";
-  if (saveSectionBtn) saveSectionBtn.textContent = "Save Section";
-  if (addSectionForm) addSectionForm.reset();
+//   if (sectionFormTitle) sectionFormTitle.textContent = "Add Section";
+//   if (saveSectionBtn) saveSectionBtn.textContent = "Save Section";
+//   if (addSectionForm) addSectionForm.reset();
 
-  if (newSectionHashInput) {
-    newSectionHashInput.disabled = false;
-  }
+//   if (newSectionHashInput) {
+//     newSectionHashInput.disabled = false;
+//   }
 
-  addSectionModal.classList.add("show");
-}
+//   addSectionModal.classList.add("show");
+// }
 
-function closeAddSectionModal() {
-  if (!addSectionModal) return;
+// function closeAddSectionModal() {
+//   if (!addSectionModal) return;
 
-  addSectionModal.classList.remove("show");
-  editingSectionHash = null;
+//   addSectionModal.classList.remove("show");
+//   editingSectionHash = null;
 
-  if (addSectionForm) addSectionForm.reset();
+//   if (addSectionForm) addSectionForm.reset();
 
-  if (newSectionHashInput) {
-    newSectionHashInput.disabled = false;
-  }
+//   if (newSectionHashInput) {
+//     newSectionHashInput.disabled = false;
+//   }
 
-  if (sectionFormTitle) sectionFormTitle.textContent = "Add Section";
-  if (saveSectionBtn) saveSectionBtn.textContent = "Save Section";
-}
+//   if (sectionFormTitle) sectionFormTitle.textContent = "Add Section";
+//   if (saveSectionBtn) saveSectionBtn.textContent = "Save Section";
+// }
 
-function editSection(sectionHash) {
-  const section = sectionsData.find((item) => item.section_hash === sectionHash);
-  if (!section || !addSectionModal) return;
+// function editSection(sectionHash) {
+//   const section = sectionsData.find((item) => item.section_hash === sectionHash);
+//   if (!section || !addSectionModal) return;
 
-  editingSectionHash = sectionHash;
+//   editingSectionHash = sectionHash;
 
-  if (sectionFormTitle) sectionFormTitle.textContent = "Edit Section";
-  if (saveSectionBtn) saveSectionBtn.textContent = "Update Section";
+//   if (sectionFormTitle) sectionFormTitle.textContent = "Edit Section";
+//   if (saveSectionBtn) saveSectionBtn.textContent = "Update Section";
 
-  newSectionHashInput.value = section.section_hash || "";
-  newSectionOfferingHashInput.value = section.offering_hash || "";
-  newSectionCodeInput.value = section.section_code || "";
-  newSectionTeacherHashInput.value = section.teacher_hash || "";
-  newSectionCapacityInput.value = section.capacity || "";
-  newSectionModeInput.value = section.mode || "";
+//   newSectionHashInput.value = section.section_hash || "";
+//   newSectionOfferingHashInput.value = section.offering_hash || "";
+//   newSectionCodeInput.value = section.section_code || "";
+//   newSectionTeacherHashInput.value = section.teacher_hash || "";
+//   newSectionCapacityInput.value = section.capacity || "";
+//   newSectionModeInput.value = section.mode || "";
 
-  if (newSectionHashInput) {
-    newSectionHashInput.disabled = true;
-  }
+//   if (newSectionHashInput) {
+//     newSectionHashInput.disabled = true;
+//   }
 
-  addSectionModal.classList.add("show");
-}
+//   addSectionModal.classList.add("show");
+// }
 
-function deleteSection(sectionHash) {
-  const confirmed = confirm(`Are you sure you want to delete section ${sectionHash}?`);
-  if (!confirmed) return;
+// function deleteSection(sectionHash) {
+//   const confirmed = confirm(`Are you sure you want to delete section ${sectionHash}?`);
+//   if (!confirmed) return;
 
-  sectionsData = sectionsData.filter((section) => section.section_hash !== sectionHash);
-  renderSections(sectionsData);
-}
+//   sectionsData = sectionsData.filter((section) => section.section_hash !== sectionHash);
+//   renderSections(sectionsData);
+// }
 
-if (sectionsTableBody) {
-  fetchSections();
+// if (sectionsTableBody) {
+//   fetchSections();
 
-  if (sectionSearch) sectionSearch.addEventListener("input", filterSections);
-  if (refreshSectionsBtn) refreshSectionsBtn.addEventListener("click", fetchSections);
-  if (addSectionBtn) addSectionBtn.addEventListener("click", openAddSectionModal);
+//   if (sectionSearch) sectionSearch.addEventListener("input", filterSections);
+//   if (refreshSectionsBtn) refreshSectionsBtn.addEventListener("click", fetchSections);
+//   if (addSectionBtn) addSectionBtn.addEventListener("click", openAddSectionModal);
 
-  if (closeSectionModalBtn) {
-    closeSectionModalBtn.addEventListener("click", closeSectionModal);
-  }
+//   if (closeSectionModalBtn) {
+//     closeSectionModalBtn.addEventListener("click", closeSectionModal);
+//   }
 
-  if (sectionModalBackdrop) {
-    sectionModalBackdrop.addEventListener("click", closeSectionModal);
-  }
+//   if (sectionModalBackdrop) {
+//     sectionModalBackdrop.addEventListener("click", closeSectionModal);
+//   }
 
-  if (closeAddSectionBtn) {
-    closeAddSectionBtn.addEventListener("click", closeAddSectionModal);
-  }
+//   if (closeAddSectionBtn) {
+//     closeAddSectionBtn.addEventListener("click", closeAddSectionModal);
+//   }
 
-  if (cancelAddSection) {
-    cancelAddSection.addEventListener("click", closeAddSectionModal);
-  }
+//   if (cancelAddSection) {
+//     cancelAddSection.addEventListener("click", closeAddSectionModal);
+//   }
 
-  if (addSectionBackdrop) {
-    addSectionBackdrop.addEventListener("click", closeAddSectionModal);
-  }
+//   if (addSectionBackdrop) {
+//     addSectionBackdrop.addEventListener("click", closeAddSectionModal);
+//   }
 
-  if (addSectionForm) {
-    addSectionForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+//   if (addSectionForm) {
+//     addSectionForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
 
-      const sectionPayload = {
-        section_hash: newSectionHashInput.value,
-        offering_hash: newSectionOfferingHashInput.value || "Unknown",
-        section_code: newSectionCodeInput.value || "Unknown",
-        teacher_hash: newSectionTeacherHashInput.value || "Unknown",
-        teacher_first_name: "Unknown",
-        teacher_last_name: "",
-        capacity: newSectionCapacityInput.value || "Unknown",
-        mode: newSectionModeInput.value || "Unknown"
-      };
+//       const sectionPayload = {
+//         section_hash: newSectionHashInput.value,
+//         offering_hash: newSectionOfferingHashInput.value || "Unknown",
+//         section_code: newSectionCodeInput.value || "Unknown",
+//         teacher_hash: newSectionTeacherHashInput.value || "Unknown",
+//         teacher_first_name: "Unknown",
+//         teacher_last_name: "",
+//         capacity: newSectionCapacityInput.value || "Unknown",
+//         mode: newSectionModeInput.value || "Unknown"
+//       };
 
-      if (editingSectionHash) {
-        sectionsData = sectionsData.map((section) => {
-          if (section.section_hash === editingSectionHash) {
-            return {
-              ...section,
-              ...sectionPayload
-            };
-          }
-          return section;
-        });
-      } else {
-        sectionsData.push(sectionPayload);
-      }
+//       if (editingSectionHash) {
+//         sectionsData = sectionsData.map((section) => {
+//           if (section.section_hash === editingSectionHash) {
+//             return {
+//               ...section,
+//               ...sectionPayload
+//             };
+//           }
+//           return section;
+//         });
+//       } else {
+//         sectionsData.push(sectionPayload);
+//       }
 
-      renderSections(sectionsData);
-      closeAddSectionModal();
-    });
-  }
-}
+//       renderSections(sectionsData);
+//       closeAddSectionModal();
+//     });
+//   }
+// }
 
 // =========================
 // Levels Page
 // =========================
-const levelsTableBody = document.getElementById("levelsTableBody");
-const levelSearch = document.getElementById("levelSearch");
-const refreshLevelsBtn = document.getElementById("refreshLevelsBtn");
-const addLevelBtn = document.getElementById("addLevelBtn");
+// const levelsTableBody = document.getElementById("levelsTableBody");
+// const levelSearch = document.getElementById("levelSearch");
+// const refreshLevelsBtn = document.getElementById("refreshLevelsBtn");
+// const addLevelBtn = document.getElementById("addLevelBtn");
 
-const levelViewModal = document.getElementById("levelViewModal");
-const closeLevelModalBtn = document.getElementById("closeLevelModalBtn");
-const levelModalBackdrop = document.getElementById("levelModalBackdrop");
+// const levelViewModal = document.getElementById("levelViewModal");
+// const closeLevelModalBtn = document.getElementById("closeLevelModalBtn");
+// const levelModalBackdrop = document.getElementById("levelModalBackdrop");
 
-const detailLevelHash = document.getElementById("detailLevelHash");
-const detailLevelName = document.getElementById("detailLevelName");
+// const detailLevelHash = document.getElementById("detailLevelHash");
+// const detailLevelName = document.getElementById("detailLevelName");
 
-const addLevelModal = document.getElementById("addLevelModal");
-const addLevelBackdrop = document.getElementById("addLevelBackdrop");
-const closeAddLevelBtn = document.getElementById("closeAddLevelBtn");
-const cancelAddLevel = document.getElementById("cancelAddLevel");
-const addLevelForm = document.getElementById("addLevelForm");
+// const addLevelModal = document.getElementById("addLevelModal");
+// const addLevelBackdrop = document.getElementById("addLevelBackdrop");
+// const closeAddLevelBtn = document.getElementById("closeAddLevelBtn");
+// const cancelAddLevel = document.getElementById("cancelAddLevel");
+// const addLevelForm = document.getElementById("addLevelForm");
 
-const levelFormTitle = document.getElementById("levelFormTitle");
-const saveLevelBtn = document.getElementById("saveLevelBtn");
+// const levelFormTitle = document.getElementById("levelFormTitle");
+// const saveLevelBtn = document.getElementById("saveLevelBtn");
 
-const newLevelHash = document.getElementById("newLevelHash");
-const newLevelName = document.getElementById("newLevelName");
+// const newLevelHash = document.getElementById("newLevelHash");
+// const newLevelName = document.getElementById("newLevelName");
 
-let levelsData = [];
-let editingLevelHash = null;
+// let levelsData = [];
+// let editingLevelHash = null;
 
-const mockLevels = [
-  {
-    grade_hash: "GRD_001",
-    name: "Grade 9"
-  },
-  {
-    grade_hash: "GRD_002",
-    name: "Grade 10"
-  }
-];
+// const mockLevels = [
+//   {
+//     grade_hash: "GRD_001",
+//     name: "Grade 9"
+//   },
+//   {
+//     grade_hash: "GRD_002",
+//     name: "Grade 10"
+//   }
+// ];
 
-function renderLevels(data) {
-  if (!levelsTableBody) return;
+// function renderLevels(data) {
+//   if (!levelsTableBody) return;
 
-  if (!data || data.length === 0) {
-    levelsTableBody.innerHTML = `
-      <tr>
-        <td colspan="3" class="a-table-empty">No levels found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     levelsTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="3" class="a-table-empty">No levels found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  levelsTableBody.innerHTML = data.map((level) => `
-    <tr>
-      <td>${formatValue(level.grade_hash)}</td>
-      <td>${formatValue(level.name)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewLevel('${level.grade_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editLevel('${level.grade_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteLevel('${level.grade_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   levelsTableBody.innerHTML = data.map((level) => `
+//     <tr>
+//       <td>${formatValue(level.grade_hash)}</td>
+//       <td>${formatValue(level.name)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewLevel('${level.grade_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editLevel('${level.grade_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteLevel('${level.grade_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchLevels() {
-  if (!levelsTableBody) return;
+// async function fetchLevels() {
+//   if (!levelsTableBody) return;
 
-  levelsTableBody.innerHTML = `
-    <tr>
-      <td colspan="3" class="a-table-empty">Loading levels...</td>
-    </tr>
-  `;
+//   levelsTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="3" class="a-table-empty">Loading levels...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_levels", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_levels", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      levelsData = response.map((level) => ({
-        grade_hash: level.grade_hash || "Unknown",
-        name: level.name || "Unknown"
-      }));
-    } else {
-      levelsData = mockLevels;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       levelsData = response.map((level) => ({
+//         grade_hash: level.grade_hash || "Unknown",
+//         name: level.name || "Unknown"
+//       }));
+//     } else {
+//       levelsData = mockLevels;
+//     }
 
-    renderLevels(levelsData);
-  } catch (error) {
-    console.error("Error fetching levels:", error);
-    levelsData = mockLevels;
-    renderLevels(levelsData);
-  }
-}
+//     renderLevels(levelsData);
+//   } catch (error) {
+//     console.error("Error fetching levels:", error);
+//     levelsData = mockLevels;
+//     renderLevels(levelsData);
+//   }
+// }
 
-function filterLevels() {
-  if (!levelSearch) return;
+// function filterLevels() {
+//   if (!levelSearch) return;
 
-  const query = levelSearch.value.trim().toLowerCase();
+//   const query = levelSearch.value.trim().toLowerCase();
 
-  const filtered = levelsData.filter((level) =>
-    String(level.grade_hash).toLowerCase().includes(query) ||
-    String(level.name).toLowerCase().includes(query)
-  );
+//   const filtered = levelsData.filter((level) =>
+//     String(level.grade_hash).toLowerCase().includes(query) ||
+//     String(level.name).toLowerCase().includes(query)
+//   );
 
-  renderLevels(filtered);
-}
+//   renderLevels(filtered);
+// }
 
-function viewLevel(levelHash) {
-  const level = levelsData.find((item) => item.grade_hash === levelHash);
-  if (!level || !levelViewModal) return;
+// function viewLevel(levelHash) {
+//   const level = levelsData.find((item) => item.grade_hash === levelHash);
+//   if (!level || !levelViewModal) return;
 
-  detailLevelHash.textContent = formatValue(level.grade_hash);
-  detailLevelName.textContent = formatValue(level.name);
+//   detailLevelHash.textContent = formatValue(level.grade_hash);
+//   detailLevelName.textContent = formatValue(level.name);
 
-  levelViewModal.classList.add("show");
-}
+//   levelViewModal.classList.add("show");
+// }
 
-function closeLevelModal() {
-  if (!levelViewModal) return;
-  levelViewModal.classList.remove("show");
-}
+// function closeLevelModal() {
+//   if (!levelViewModal) return;
+//   levelViewModal.classList.remove("show");
+// }
 
-function openAddLevelModal() {
-  if (!addLevelModal) return;
+// function openAddLevelModal() {
+//   if (!addLevelModal) return;
 
-  editingLevelHash = null;
+//   editingLevelHash = null;
 
-  if (levelFormTitle) levelFormTitle.textContent = "Add Level";
-  if (saveLevelBtn) saveLevelBtn.textContent = "Save Level";
-  if (addLevelForm) addLevelForm.reset();
+//   if (levelFormTitle) levelFormTitle.textContent = "Add Level";
+//   if (saveLevelBtn) saveLevelBtn.textContent = "Save Level";
+//   if (addLevelForm) addLevelForm.reset();
 
-  if (newLevelHash) {
-    newLevelHash.disabled = false;
-  }
+//   if (newLevelHash) {
+//     newLevelHash.disabled = false;
+//   }
 
-  addLevelModal.classList.add("show");
-}
+//   addLevelModal.classList.add("show");
+// }
 
-function closeAddLevelModal() {
-  if (!addLevelModal) return;
+// function closeAddLevelModal() {
+//   if (!addLevelModal) return;
 
-  addLevelModal.classList.remove("show");
-  editingLevelHash = null;
+//   addLevelModal.classList.remove("show");
+//   editingLevelHash = null;
 
-  if (addLevelForm) addLevelForm.reset();
+//   if (addLevelForm) addLevelForm.reset();
 
-  if (newLevelHash) {
-    newLevelHash.disabled = false;
-  }
+//   if (newLevelHash) {
+//     newLevelHash.disabled = false;
+//   }
 
-  if (levelFormTitle) levelFormTitle.textContent = "Add Level";
-  if (saveLevelBtn) saveLevelBtn.textContent = "Save Level";
-}
+//   if (levelFormTitle) levelFormTitle.textContent = "Add Level";
+//   if (saveLevelBtn) saveLevelBtn.textContent = "Save Level";
+// }
 
-function editLevel(levelHash) {
-  const level = levelsData.find((item) => item.grade_hash === levelHash);
-  if (!level || !addLevelModal) return;
+// function editLevel(levelHash) {
+//   const level = levelsData.find((item) => item.grade_hash === levelHash);
+//   if (!level || !addLevelModal) return;
 
-  editingLevelHash = levelHash;
+//   editingLevelHash = levelHash;
 
-  if (levelFormTitle) levelFormTitle.textContent = "Edit Level";
-  if (saveLevelBtn) saveLevelBtn.textContent = "Update Level";
+//   if (levelFormTitle) levelFormTitle.textContent = "Edit Level";
+//   if (saveLevelBtn) saveLevelBtn.textContent = "Update Level";
 
-  newLevelHash.value = level.grade_hash || "";
-  newLevelName.value = level.name || "";
+//   newLevelHash.value = level.grade_hash || "";
+//   newLevelName.value = level.name || "";
 
-  if (newLevelHash) {
-    newLevelHash.disabled = true;
-  }
+//   if (newLevelHash) {
+//     newLevelHash.disabled = true;
+//   }
 
-  addLevelModal.classList.add("show");
-}
+//   addLevelModal.classList.add("show");
+// }
 
-function deleteLevel(levelHash) {
-  const confirmed = confirm(`Are you sure you want to delete level ${levelHash}?`);
-  if (!confirmed) return;
+// function deleteLevel(levelHash) {
+//   const confirmed = confirm(`Are you sure you want to delete level ${levelHash}?`);
+//   if (!confirmed) return;
 
-  levelsData = levelsData.filter((level) => level.grade_hash !== levelHash);
-  renderLevels(levelsData);
-}
+//   levelsData = levelsData.filter((level) => level.grade_hash !== levelHash);
+//   renderLevels(levelsData);
+// }
 
-if (levelsTableBody) {
-  fetchLevels();
+// if (levelsTableBody) {
+//   fetchLevels();
 
-  if (levelSearch) levelSearch.addEventListener("input", filterLevels);
-  if (refreshLevelsBtn) refreshLevelsBtn.addEventListener("click", fetchLevels);
-  if (addLevelBtn) addLevelBtn.addEventListener("click", openAddLevelModal);
+//   if (levelSearch) levelSearch.addEventListener("input", filterLevels);
+//   if (refreshLevelsBtn) refreshLevelsBtn.addEventListener("click", fetchLevels);
+//   if (addLevelBtn) addLevelBtn.addEventListener("click", openAddLevelModal);
 
-  if (closeLevelModalBtn) {
-    closeLevelModalBtn.addEventListener("click", closeLevelModal);
-  }
+//   if (closeLevelModalBtn) {
+//     closeLevelModalBtn.addEventListener("click", closeLevelModal);
+//   }
 
-  if (levelModalBackdrop) {
-    levelModalBackdrop.addEventListener("click", closeLevelModal);
-  }
+//   if (levelModalBackdrop) {
+//     levelModalBackdrop.addEventListener("click", closeLevelModal);
+//   }
 
-  if (closeAddLevelBtn) {
-    closeAddLevelBtn.addEventListener("click", closeAddLevelModal);
-  }
+//   if (closeAddLevelBtn) {
+//     closeAddLevelBtn.addEventListener("click", closeAddLevelModal);
+//   }
 
-  if (cancelAddLevel) {
-    cancelAddLevel.addEventListener("click", closeAddLevelModal);
-  }
+//   if (cancelAddLevel) {
+//     cancelAddLevel.addEventListener("click", closeAddLevelModal);
+//   }
 
-  if (addLevelBackdrop) {
-    addLevelBackdrop.addEventListener("click", closeAddLevelModal);
-  }
+//   if (addLevelBackdrop) {
+//     addLevelBackdrop.addEventListener("click", closeAddLevelModal);
+//   }
 
-  if (addLevelForm) {
-    addLevelForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+//   if (addLevelForm) {
+//     addLevelForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
 
-      const levelPayload = {
-        grade_hash: newLevelHash.value,
-        name: newLevelName.value
-      };
+//       const levelPayload = {
+//         grade_hash: newLevelHash.value,
+//         name: newLevelName.value
+//       };
 
-      if (editingLevelHash) {
-        levelsData = levelsData.map((level) => {
-          if (level.grade_hash === editingLevelHash) {
-            return {
-              ...level,
-              ...levelPayload
-            };
-          }
-          return level;
-        });
-      } else {
-        levelsData.push(levelPayload);
-      }
+//       if (editingLevelHash) {
+//         levelsData = levelsData.map((level) => {
+//           if (level.grade_hash === editingLevelHash) {
+//             return {
+//               ...level,
+//               ...levelPayload
+//             };
+//           }
+//           return level;
+//         });
+//       } else {
+//         levelsData.push(levelPayload);
+//       }
 
-      renderLevels(levelsData);
-      closeAddLevelModal();
-    });
-  }
-}
+//       renderLevels(levelsData);
+//       closeAddLevelModal();
+//     });
+//   }
+// }
 
 // =========================
 // Terms Page
 // =========================
-const termsTableBody = document.getElementById("termsTableBody");
-const termSearch = document.getElementById("termSearch");
-const refreshTermsBtn = document.getElementById("refreshTermsBtn");
-const addTermBtn = document.getElementById("addTermBtn");
+// const termsTableBody = document.getElementById("termsTableBody");
+// const termSearch = document.getElementById("termSearch");
+// const refreshTermsBtn = document.getElementById("refreshTermsBtn");
+// const addTermBtn = document.getElementById("addTermBtn");
 
-const termViewModal = document.getElementById("termViewModal");
-const closeTermModalBtn = document.getElementById("closeTermModalBtn");
-const termModalBackdrop = document.getElementById("termModalBackdrop");
+// const termViewModal = document.getElementById("termViewModal");
+// const closeTermModalBtn = document.getElementById("closeTermModalBtn");
+// const termModalBackdrop = document.getElementById("termModalBackdrop");
 
-const detailTermHash = document.getElementById("detailTermHash");
-const detailTermName = document.getElementById("detailTermName");
-const detailTermStartDate = document.getElementById("detailTermStartDate");
-const detailTermEndDate = document.getElementById("detailTermEndDate");
-const detailTermCreatedAt = document.getElementById("detailTermCreatedAt");
+// const detailTermHash = document.getElementById("detailTermHash");
+// const detailTermName = document.getElementById("detailTermName");
+// const detailTermStartDate = document.getElementById("detailTermStartDate");
+// const detailTermEndDate = document.getElementById("detailTermEndDate");
+// const detailTermCreatedAt = document.getElementById("detailTermCreatedAt");
 
-const addTermModal = document.getElementById("addTermModal");
-const addTermBackdrop = document.getElementById("addTermBackdrop");
-const closeAddTermBtn = document.getElementById("closeAddTermBtn");
-const cancelAddTerm = document.getElementById("cancelAddTerm");
-const addTermForm = document.getElementById("addTermForm");
+// const addTermModal = document.getElementById("addTermModal");
+// const addTermBackdrop = document.getElementById("addTermBackdrop");
+// const closeAddTermBtn = document.getElementById("closeAddTermBtn");
+// const cancelAddTerm = document.getElementById("cancelAddTerm");
+// const addTermForm = document.getElementById("addTermForm");
 
-const termFormTitle = document.getElementById("termFormTitle");
-const saveTermBtn = document.getElementById("saveTermBtn");
+// const termFormTitle = document.getElementById("termFormTitle");
+// const saveTermBtn = document.getElementById("saveTermBtn");
 
-const newTermHash = document.getElementById("newTermHash");
-const newTermName = document.getElementById("newTermName");
-const newTermStartDate = document.getElementById("newTermStartDate");
-const newTermEndDate = document.getElementById("newTermEndDate");
+// const newTermHash = document.getElementById("newTermHash");
+// const newTermName = document.getElementById("newTermName");
+// const newTermStartDate = document.getElementById("newTermStartDate");
+// const newTermEndDate = document.getElementById("newTermEndDate");
 
-let termsData = [];
-let editingTermHash = null;
+// let termsData = [];
+// let editingTermHash = null;
 
-const mockTerms = [
-  {
-    term_hash: "TERM_001",
-    name: "Fall 2026",
-    start_date: "2026-09-01",
-    end_date: "2026-12-20",
-    created_at: "2026-03-01"
-  },
-  {
-    term_hash: "TERM_002",
-    name: "Spring 2027",
-    start_date: "2027-01-10",
-    end_date: "2027-05-25",
-    created_at: "2026-03-02"
-  }
-];
+// const mockTerms = [
+//   {
+//     term_hash: "TERM_001",
+//     name: "Fall 2026",
+//     start_date: "2026-09-01",
+//     end_date: "2026-12-20",
+//     created_at: "2026-03-01"
+//   },
+//   {
+//     term_hash: "TERM_002",
+//     name: "Spring 2027",
+//     start_date: "2027-01-10",
+//     end_date: "2027-05-25",
+//     created_at: "2026-03-02"
+//   }
+// ];
 
-function renderTerms(data) {
-  if (!termsTableBody) return;
+// function renderTerms(data) {
+//   if (!termsTableBody) return;
 
-  if (!data || data.length === 0) {
-    termsTableBody.innerHTML = `
-      <tr>
-        <td colspan="6" class="a-table-empty">No terms found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     termsTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="6" class="a-table-empty">No terms found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  termsTableBody.innerHTML = data.map((term) => `
-    <tr>
-      <td>${formatValue(term.term_hash)}</td>
-      <td>${formatValue(term.name)}</td>
-      <td>${formatValue(term.start_date)}</td>
-      <td>${formatValue(term.end_date)}</td>
-      <td>${formatValue(term.created_at)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewTerm('${term.term_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editTerm('${term.term_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteTerm('${term.term_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   termsTableBody.innerHTML = data.map((term) => `
+//     <tr>
+//       <td>${formatValue(term.term_hash)}</td>
+//       <td>${formatValue(term.name)}</td>
+//       <td>${formatValue(term.start_date)}</td>
+//       <td>${formatValue(term.end_date)}</td>
+//       <td>${formatValue(term.created_at)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewTerm('${term.term_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editTerm('${term.term_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteTerm('${term.term_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchTerms() {
-  if (!termsTableBody) return;
+// async function fetchTerms() {
+//   if (!termsTableBody) return;
 
-  termsTableBody.innerHTML = `
-    <tr>
-      <td colspan="6" class="a-table-empty">Loading terms...</td>
-    </tr>
-  `;
+//   termsTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="6" class="a-table-empty">Loading terms...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_terms", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_terms", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      termsData = response.map((term) => ({
-        term_hash: term.term_hash || "Unknown",
-        name: term.name || "Unknown",
-        start_date: term.start_date || "Unknown",
-        end_date: term.end_date || "Unknown",
-        created_at: term.created_at || "Unknown"
-      }));
-    } else {
-      termsData = mockTerms;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       termsData = response.map((term) => ({
+//         term_hash: term.term_hash || "Unknown",
+//         name: term.name || "Unknown",
+//         start_date: term.start_date || "Unknown",
+//         end_date: term.end_date || "Unknown",
+//         created_at: term.created_at || "Unknown"
+//       }));
+//     } else {
+//       termsData = mockTerms;
+//     }
 
-    renderTerms(termsData);
-  } catch (error) {
-    console.error("Error fetching terms:", error);
-    termsData = mockTerms;
-    renderTerms(termsData);
-  }
-}
+//     renderTerms(termsData);
+//   } catch (error) {
+//     console.error("Error fetching terms:", error);
+//     termsData = mockTerms;
+//     renderTerms(termsData);
+//   }
+// }
 
-function filterTerms() {
-  if (!termSearch) return;
+// function filterTerms() {
+//   if (!termSearch) return;
 
-  const query = termSearch.value.trim().toLowerCase();
+//   const query = termSearch.value.trim().toLowerCase();
 
-  const filtered = termsData.filter((term) =>
-    String(term.term_hash).toLowerCase().includes(query) ||
-    String(term.name).toLowerCase().includes(query)
-  );
+//   const filtered = termsData.filter((term) =>
+//     String(term.term_hash).toLowerCase().includes(query) ||
+//     String(term.name).toLowerCase().includes(query)
+//   );
 
-  renderTerms(filtered);
-}
+//   renderTerms(filtered);
+// }
 
-function viewTerm(termHash) {
-  const term = termsData.find((item) => item.term_hash === termHash);
-  if (!term || !termViewModal) return;
+// function viewTerm(termHash) {
+//   const term = termsData.find((item) => item.term_hash === termHash);
+//   if (!term || !termViewModal) return;
 
-  detailTermHash.textContent = formatValue(term.term_hash);
-  detailTermName.textContent = formatValue(term.name);
-  detailTermStartDate.textContent = formatValue(term.start_date);
-  detailTermEndDate.textContent = formatValue(term.end_date);
-  detailTermCreatedAt.textContent = formatValue(term.created_at);
+//   detailTermHash.textContent = formatValue(term.term_hash);
+//   detailTermName.textContent = formatValue(term.name);
+//   detailTermStartDate.textContent = formatValue(term.start_date);
+//   detailTermEndDate.textContent = formatValue(term.end_date);
+//   detailTermCreatedAt.textContent = formatValue(term.created_at);
 
-  termViewModal.classList.add("show");
-}
+//   termViewModal.classList.add("show");
+// }
 
-function closeTermModal() {
-  if (!termViewModal) return;
-  termViewModal.classList.remove("show");
-}
+// function closeTermModal() {
+//   if (!termViewModal) return;
+//   termViewModal.classList.remove("show");
+// }
 
-function openAddTermModal() {
-  if (!addTermModal) return;
+// function openAddTermModal() {
+//   if (!addTermModal) return;
 
-  editingTermHash = null;
+//   editingTermHash = null;
 
-  if (termFormTitle) termFormTitle.textContent = "Add Term";
-  if (saveTermBtn) saveTermBtn.textContent = "Save Term";
-  if (addTermForm) addTermForm.reset();
+//   if (termFormTitle) termFormTitle.textContent = "Add Term";
+//   if (saveTermBtn) saveTermBtn.textContent = "Save Term";
+//   if (addTermForm) addTermForm.reset();
 
-  if (newTermHash) {
-    newTermHash.disabled = false;
-  }
+//   if (newTermHash) {
+//     newTermHash.disabled = false;
+//   }
 
-  addTermModal.classList.add("show");
-}
+//   addTermModal.classList.add("show");
+// }
 
-function closeAddTermModal() {
-  if (!addTermModal) return;
+// function closeAddTermModal() {
+//   if (!addTermModal) return;
 
-  addTermModal.classList.remove("show");
-  editingTermHash = null;
+//   addTermModal.classList.remove("show");
+//   editingTermHash = null;
 
-  if (addTermForm) addTermForm.reset();
+//   if (addTermForm) addTermForm.reset();
 
-  if (newTermHash) {
-    newTermHash.disabled = false;
-  }
+//   if (newTermHash) {
+//     newTermHash.disabled = false;
+//   }
 
-  if (termFormTitle) termFormTitle.textContent = "Add Term";
-  if (saveTermBtn) saveTermBtn.textContent = "Save Term";
-}
+//   if (termFormTitle) termFormTitle.textContent = "Add Term";
+//   if (saveTermBtn) saveTermBtn.textContent = "Save Term";
+// }
 
-function editTerm(termHash) {
-  const term = termsData.find((item) => item.term_hash === termHash);
-  if (!term || !addTermModal) return;
+// function editTerm(termHash) {
+//   const term = termsData.find((item) => item.term_hash === termHash);
+//   if (!term || !addTermModal) return;
 
-  editingTermHash = termHash;
+//   editingTermHash = termHash;
 
-  if (termFormTitle) termFormTitle.textContent = "Edit Term";
-  if (saveTermBtn) saveTermBtn.textContent = "Update Term";
+//   if (termFormTitle) termFormTitle.textContent = "Edit Term";
+//   if (saveTermBtn) saveTermBtn.textContent = "Update Term";
 
-  newTermHash.value = term.term_hash || "";
-  newTermName.value = term.name || "";
-  newTermStartDate.value = term.start_date || "";
-  newTermEndDate.value = term.end_date || "";
+//   newTermHash.value = term.term_hash || "";
+//   newTermName.value = term.name || "";
+//   newTermStartDate.value = term.start_date || "";
+//   newTermEndDate.value = term.end_date || "";
 
-  if (newTermHash) {
-    newTermHash.disabled = true;
-  }
+//   if (newTermHash) {
+//     newTermHash.disabled = true;
+//   }
 
-  addTermModal.classList.add("show");
-}
+//   addTermModal.classList.add("show");
+// }
 
-function deleteTerm(termHash) {
-  const confirmed = confirm(`Are you sure you want to delete term ${termHash}?`);
-  if (!confirmed) return;
+// function deleteTerm(termHash) {
+//   const confirmed = confirm(`Are you sure you want to delete term ${termHash}?`);
+//   if (!confirmed) return;
 
-  termsData = termsData.filter((term) => term.term_hash !== termHash);
-  renderTerms(termsData);
-}
+//   termsData = termsData.filter((term) => term.term_hash !== termHash);
+//   renderTerms(termsData);
+// }
 
-if (termsTableBody) {
-  fetchTerms();
+// if (termsTableBody) {
+//   fetchTerms();
 
-  if (termSearch) termSearch.addEventListener("input", filterTerms);
-  if (refreshTermsBtn) refreshTermsBtn.addEventListener("click", fetchTerms);
-  if (addTermBtn) addTermBtn.addEventListener("click", openAddTermModal);
+//   if (termSearch) termSearch.addEventListener("input", filterTerms);
+//   if (refreshTermsBtn) refreshTermsBtn.addEventListener("click", fetchTerms);
+//   if (addTermBtn) addTermBtn.addEventListener("click", openAddTermModal);
 
-  if (closeTermModalBtn) {
-    closeTermModalBtn.addEventListener("click", closeTermModal);
-  }
+//   if (closeTermModalBtn) {
+//     closeTermModalBtn.addEventListener("click", closeTermModal);
+//   }
 
-  if (termModalBackdrop) {
-    termModalBackdrop.addEventListener("click", closeTermModal);
-  }
+//   if (termModalBackdrop) {
+//     termModalBackdrop.addEventListener("click", closeTermModal);
+//   }
 
-  if (closeAddTermBtn) {
-    closeAddTermBtn.addEventListener("click", closeAddTermModal);
-  }
+//   if (closeAddTermBtn) {
+//     closeAddTermBtn.addEventListener("click", closeAddTermModal);
+//   }
 
-  if (cancelAddTerm) {
-    cancelAddTerm.addEventListener("click", closeAddTermModal);
-  }
+//   if (cancelAddTerm) {
+//     cancelAddTerm.addEventListener("click", closeAddTermModal);
+//   }
 
-  if (addTermBackdrop) {
-    addTermBackdrop.addEventListener("click", closeAddTermModal);
-  }
+//   if (addTermBackdrop) {
+//     addTermBackdrop.addEventListener("click", closeAddTermModal);
+//   }
 
-  if (addTermForm) {
-    addTermForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+//   if (addTermForm) {
+//     addTermForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
 
-      const termPayload = {
-        term_hash: newTermHash.value,
-        name: newTermName.value,
-        start_date: newTermStartDate.value || "Unknown",
-        end_date: newTermEndDate.value || "Unknown"
-      };
+//       const termPayload = {
+//         term_hash: newTermHash.value,
+//         name: newTermName.value,
+//         start_date: newTermStartDate.value || "Unknown",
+//         end_date: newTermEndDate.value || "Unknown"
+//       };
 
-      if (editingTermHash) {
-        termsData = termsData.map((term) => {
-          if (term.term_hash === editingTermHash) {
-            return {
-              ...term,
-              ...termPayload
-            };
-          }
-          return term;
-        });
-      } else {
-        termsData.push({
-          ...termPayload,
-          created_at: new Date().toISOString().split("T")[0]
-        });
-      }
+//       if (editingTermHash) {
+//         termsData = termsData.map((term) => {
+//           if (term.term_hash === editingTermHash) {
+//             return {
+//               ...term,
+//               ...termPayload
+//             };
+//           }
+//           return term;
+//         });
+//       } else {
+//         termsData.push({
+//           ...termPayload,
+//           created_at: new Date().toISOString().split("T")[0]
+//         });
+//       }
 
-      renderTerms(termsData);
-      closeAddTermModal();
-    });
-  }
-}
+//       renderTerms(termsData);
+//       closeAddTermModal();
+//     });
+//   }
+// }
 
 // =========================
 // Courses Page
 // =========================
-const coursesTableBody = document.getElementById("coursesTableBody");
-const courseSearch = document.getElementById("courseSearch");
-const refreshCoursesBtn = document.getElementById("refreshCoursesBtn");
-const addCourseBtn = document.getElementById("addCourseBtn");
+// const coursesTableBody = document.getElementById("coursesTableBody");
+// const courseSearch = document.getElementById("courseSearch");
+// const refreshCoursesBtn = document.getElementById("refreshCoursesBtn");
+// const addCourseBtn = document.getElementById("addCourseBtn");
 
-const courseViewModal = document.getElementById("courseViewModal");
-const closeCourseModalBtn = document.getElementById("closeCourseModalBtn");
-const courseModalBackdrop = document.getElementById("courseModalBackdrop");
+// const courseViewModal = document.getElementById("courseViewModal");
+// const closeCourseModalBtn = document.getElementById("closeCourseModalBtn");
+// const courseModalBackdrop = document.getElementById("courseModalBackdrop");
 
-const detailCourseHash = document.getElementById("detailCourseHash");
-const detailCourseCode = document.getElementById("detailCourseCode");
-const detailCourseTitle = document.getElementById("detailCourseTitle");
-const detailCourseDescription = document.getElementById("detailCourseDescription");
-const detailCourseCredits = document.getElementById("detailCourseCredits");
-const detailCourseCreatedAt = document.getElementById("detailCourseCreatedAt");
-const detailCourseUpdatedAt = document.getElementById("detailCourseUpdatedAt");
+// const detailCourseHash = document.getElementById("detailCourseHash");
+// const detailCourseCode = document.getElementById("detailCourseCode");
+// const detailCourseTitle = document.getElementById("detailCourseTitle");
+// const detailCourseDescription = document.getElementById("detailCourseDescription");
+// const detailCourseCredits = document.getElementById("detailCourseCredits");
+// const detailCourseCreatedAt = document.getElementById("detailCourseCreatedAt");
+// const detailCourseUpdatedAt = document.getElementById("detailCourseUpdatedAt");
 
-const addCourseModal = document.getElementById("addCourseModal");
-const addCourseBackdrop = document.getElementById("addCourseBackdrop");
-const closeAddCourseBtn = document.getElementById("closeAddCourseBtn");
-const cancelAddCourse = document.getElementById("cancelAddCourse");
-const addCourseForm = document.getElementById("addCourseForm");
+// const addCourseModal = document.getElementById("addCourseModal");
+// const addCourseBackdrop = document.getElementById("addCourseBackdrop");
+// const closeAddCourseBtn = document.getElementById("closeAddCourseBtn");
+// const cancelAddCourse = document.getElementById("cancelAddCourse");
+// const addCourseForm = document.getElementById("addCourseForm");
 
-const courseFormTitle = document.getElementById("courseFormTitle");
-const saveCourseBtn = document.getElementById("saveCourseBtn");
+// const courseFormTitle = document.getElementById("courseFormTitle");
+// const saveCourseBtn = document.getElementById("saveCourseBtn");
 
-const newCourseHash = document.getElementById("newCourseHash");
-const newCourseCode = document.getElementById("newCourseCode");
-const newCourseTitle = document.getElementById("newCourseTitle");
-const newCourseDescription = document.getElementById("newCourseDescription");
-const newCourseCredits = document.getElementById("newCourseCredits");
+// const newCourseHash = document.getElementById("newCourseHash");
+// const newCourseCode = document.getElementById("newCourseCode");
+// const newCourseTitle = document.getElementById("newCourseTitle");
+// const newCourseDescription = document.getElementById("newCourseDescription");
+// const newCourseCredits = document.getElementById("newCourseCredits");
 
-let coursesData = [];
-let editingCourseHash = null;
+// let coursesData = [];
+// let editingCourseHash = null;
 
-const mockCourses = [
-  {
-    course_hash: "CRS_001",
-    code: "MATH101",
-    title: "Mathematics",
-    description: "Core mathematics course",
-    credits: "3",
-    created_at: "2026-03-01",
-    updated_at: "2026-03-01"
-  },
-  {
-    course_hash: "CRS_002",
-    code: "PHY101",
-    title: "Physics",
-    description: "Introductory physics course",
-    credits: "4",
-    created_at: "2026-03-02",
-    updated_at: "2026-03-02"
-  }
-];
+// const mockCourses = [
+//   {
+//     course_hash: "CRS_001",
+//     code: "MATH101",
+//     title: "Mathematics",
+//     description: "Core mathematics course",
+//     credits: "3",
+//     created_at: "2026-03-01",
+//     updated_at: "2026-03-01"
+//   },
+//   {
+//     course_hash: "CRS_002",
+//     code: "PHY101",
+//     title: "Physics",
+//     description: "Introductory physics course",
+//     credits: "4",
+//     created_at: "2026-03-02",
+//     updated_at: "2026-03-02"
+//   }
+// ];
 
-function renderCourses(data) {
-  if (!coursesTableBody) return;
+// function renderCourses(data) {
+//   if (!coursesTableBody) return;
 
-  if (!data || data.length === 0) {
-    coursesTableBody.innerHTML = `
-      <tr>
-        <td colspan="7" class="a-table-empty">No courses found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     coursesTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="7" class="a-table-empty">No courses found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  coursesTableBody.innerHTML = data.map((course) => `
-    <tr>
-      <td>${formatValue(course.course_hash)}</td>
-      <td>${formatValue(course.code)}</td>
-      <td>${formatValue(course.title)}</td>
-      <td>${formatValue(course.credits)}</td>
-      <td>${formatValue(course.created_at)}</td>
-      <td>${formatValue(course.updated_at)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewCourse('${course.course_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editCourse('${course.course_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteCourse('${course.course_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   coursesTableBody.innerHTML = data.map((course) => `
+//     <tr>
+//       <td>${formatValue(course.course_hash)}</td>
+//       <td>${formatValue(course.code)}</td>
+//       <td>${formatValue(course.title)}</td>
+//       <td>${formatValue(course.credits)}</td>
+//       <td>${formatValue(course.created_at)}</td>
+//       <td>${formatValue(course.updated_at)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewCourse('${course.course_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editCourse('${course.course_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteCourse('${course.course_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchCourses() {
-  if (!coursesTableBody) return;
+// async function fetchCourses() {
+//   if (!coursesTableBody) return;
 
-  coursesTableBody.innerHTML = `
-    <tr>
-      <td colspan="7" class="a-table-empty">Loading courses...</td>
-    </tr>
-  `;
+//   coursesTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="7" class="a-table-empty">Loading courses...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_courses", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_courses", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      coursesData = response.map((course) => ({
-        course_hash: course.course_hash || "Unknown",
-        code: course.code || "Unknown",
-        title: course.title || "Unknown",
-        description: course.description || "Unknown",
-        credits: course.credits || "Unknown",
-        created_at: course.created_at || "Unknown",
-        updated_at: course.updated_at || "Unknown"
-      }));
-    } else {
-      coursesData = mockCourses;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       coursesData = response.map((course) => ({
+//         course_hash: course.course_hash || "Unknown",
+//         code: course.code || "Unknown",
+//         title: course.title || "Unknown",
+//         description: course.description || "Unknown",
+//         credits: course.credits || "Unknown",
+//         created_at: course.created_at || "Unknown",
+//         updated_at: course.updated_at || "Unknown"
+//       }));
+//     } else {
+//       coursesData = mockCourses;
+//     }
 
-    renderCourses(coursesData);
-  } catch (error) {
-    console.error("Error fetching courses:", error);
-    coursesData = mockCourses;
-    renderCourses(coursesData);
-  }
-}
+//     renderCourses(coursesData);
+//   } catch (error) {
+//     console.error("Error fetching courses:", error);
+//     coursesData = mockCourses;
+//     renderCourses(coursesData);
+//   }
+// }
 
-function filterCourses() {
-  if (!courseSearch) return;
+// function filterCourses() {
+//   if (!courseSearch) return;
 
-  const query = courseSearch.value.trim().toLowerCase();
+//   const query = courseSearch.value.trim().toLowerCase();
 
-  const filtered = coursesData.filter((course) =>
-    String(course.course_hash).toLowerCase().includes(query) ||
-    String(course.code).toLowerCase().includes(query) ||
-    String(course.title).toLowerCase().includes(query)
-  );
+//   const filtered = coursesData.filter((course) =>
+//     String(course.course_hash).toLowerCase().includes(query) ||
+//     String(course.code).toLowerCase().includes(query) ||
+//     String(course.title).toLowerCase().includes(query)
+//   );
 
-  renderCourses(filtered);
-}
+//   renderCourses(filtered);
+// }
 
-function viewCourse(courseHash) {
-  const course = coursesData.find((item) => item.course_hash === courseHash);
-  if (!course || !courseViewModal) return;
+// function viewCourse(courseHash) {
+//   const course = coursesData.find((item) => item.course_hash === courseHash);
+//   if (!course || !courseViewModal) return;
 
-  detailCourseHash.textContent = formatValue(course.course_hash);
-  detailCourseCode.textContent = formatValue(course.code);
-  detailCourseTitle.textContent = formatValue(course.title);
-  detailCourseDescription.textContent = formatValue(course.description);
-  detailCourseCredits.textContent = formatValue(course.credits);
-  detailCourseCreatedAt.textContent = formatValue(course.created_at);
-  detailCourseUpdatedAt.textContent = formatValue(course.updated_at);
+//   detailCourseHash.textContent = formatValue(course.course_hash);
+//   detailCourseCode.textContent = formatValue(course.code);
+//   detailCourseTitle.textContent = formatValue(course.title);
+//   detailCourseDescription.textContent = formatValue(course.description);
+//   detailCourseCredits.textContent = formatValue(course.credits);
+//   detailCourseCreatedAt.textContent = formatValue(course.created_at);
+//   detailCourseUpdatedAt.textContent = formatValue(course.updated_at);
 
-  courseViewModal.classList.add("show");
-}
+//   courseViewModal.classList.add("show");
+// }
 
-function closeCourseModal() {
-  if (!courseViewModal) return;
-  courseViewModal.classList.remove("show");
-}
+// function closeCourseModal() {
+//   if (!courseViewModal) return;
+//   courseViewModal.classList.remove("show");
+// }
 
-function openAddCourseModal() {
-  if (!addCourseModal) return;
+// function openAddCourseModal() {
+//   if (!addCourseModal) return;
 
-  editingCourseHash = null;
+//   editingCourseHash = null;
 
-  if (courseFormTitle) courseFormTitle.textContent = "Add Course";
-  if (saveCourseBtn) saveCourseBtn.textContent = "Save Course";
-  if (addCourseForm) addCourseForm.reset();
+//   if (courseFormTitle) courseFormTitle.textContent = "Add Course";
+//   if (saveCourseBtn) saveCourseBtn.textContent = "Save Course";
+//   if (addCourseForm) addCourseForm.reset();
 
-  if (newCourseHash) {
-    newCourseHash.disabled = false;
-  }
+//   if (newCourseHash) {
+//     newCourseHash.disabled = false;
+//   }
 
-  addCourseModal.classList.add("show");
-}
+//   addCourseModal.classList.add("show");
+// }
 
-function closeAddCourseModal() {
-  if (!addCourseModal) return;
+// function closeAddCourseModal() {
+//   if (!addCourseModal) return;
 
-  addCourseModal.classList.remove("show");
-  editingCourseHash = null;
+//   addCourseModal.classList.remove("show");
+//   editingCourseHash = null;
 
-  if (addCourseForm) addCourseForm.reset();
+//   if (addCourseForm) addCourseForm.reset();
 
-  if (newCourseHash) {
-    newCourseHash.disabled = false;
-  }
+//   if (newCourseHash) {
+//     newCourseHash.disabled = false;
+//   }
 
-  if (courseFormTitle) courseFormTitle.textContent = "Add Course";
-  if (saveCourseBtn) saveCourseBtn.textContent = "Save Course";
-}
+//   if (courseFormTitle) courseFormTitle.textContent = "Add Course";
+//   if (saveCourseBtn) saveCourseBtn.textContent = "Save Course";
+// }
 
-function editCourse(courseHash) {
-  const course = coursesData.find((item) => item.course_hash === courseHash);
-  if (!course || !addCourseModal) return;
+// function editCourse(courseHash) {
+//   const course = coursesData.find((item) => item.course_hash === courseHash);
+//   if (!course || !addCourseModal) return;
 
-  editingCourseHash = courseHash;
+//   editingCourseHash = courseHash;
 
-  if (courseFormTitle) courseFormTitle.textContent = "Edit Course";
-  if (saveCourseBtn) saveCourseBtn.textContent = "Update Course";
+//   if (courseFormTitle) courseFormTitle.textContent = "Edit Course";
+//   if (saveCourseBtn) saveCourseBtn.textContent = "Update Course";
 
-  newCourseHash.value = course.course_hash || "";
-  newCourseCode.value = course.code || "";
-  newCourseTitle.value = course.title || "";
-  newCourseDescription.value = course.description || "";
-  newCourseCredits.value = course.credits || "";
+//   newCourseHash.value = course.course_hash || "";
+//   newCourseCode.value = course.code || "";
+//   newCourseTitle.value = course.title || "";
+//   newCourseDescription.value = course.description || "";
+//   newCourseCredits.value = course.credits || "";
 
-  if (newCourseHash) {
-    newCourseHash.disabled = true;
-  }
+//   if (newCourseHash) {
+//     newCourseHash.disabled = true;
+//   }
 
-  addCourseModal.classList.add("show");
-}
+//   addCourseModal.classList.add("show");
+// }
 
-function deleteCourse(courseHash) {
-  const confirmed = confirm(`Are you sure you want to delete course ${courseHash}?`);
-  if (!confirmed) return;
+// function deleteCourse(courseHash) {
+//   const confirmed = confirm(`Are you sure you want to delete course ${courseHash}?`);
+//   if (!confirmed) return;
 
-  coursesData = coursesData.filter((course) => course.course_hash !== courseHash);
-  renderCourses(coursesData);
-}
+//   coursesData = coursesData.filter((course) => course.course_hash !== courseHash);
+//   renderCourses(coursesData);
+// }
 
-if (coursesTableBody) {
-  fetchCourses();
+// if (coursesTableBody) {
+//   fetchCourses();
 
-  if (courseSearch) courseSearch.addEventListener("input", filterCourses);
-  if (refreshCoursesBtn) refreshCoursesBtn.addEventListener("click", fetchCourses);
-  if (addCourseBtn) addCourseBtn.addEventListener("click", openAddCourseModal);
+//   if (courseSearch) courseSearch.addEventListener("input", filterCourses);
+//   if (refreshCoursesBtn) refreshCoursesBtn.addEventListener("click", fetchCourses);
+//   if (addCourseBtn) addCourseBtn.addEventListener("click", openAddCourseModal);
 
-  if (closeCourseModalBtn) {
-    closeCourseModalBtn.addEventListener("click", closeCourseModal);
-  }
+//   if (closeCourseModalBtn) {
+//     closeCourseModalBtn.addEventListener("click", closeCourseModal);
+//   }
 
-  if (courseModalBackdrop) {
-    courseModalBackdrop.addEventListener("click", closeCourseModal);
-  }
+//   if (courseModalBackdrop) {
+//     courseModalBackdrop.addEventListener("click", closeCourseModal);
+//   }
 
-  if (closeAddCourseBtn) {
-    closeAddCourseBtn.addEventListener("click", closeAddCourseModal);
-  }
+//   if (closeAddCourseBtn) {
+//     closeAddCourseBtn.addEventListener("click", closeAddCourseModal);
+//   }
 
-  if (cancelAddCourse) {
-    cancelAddCourse.addEventListener("click", closeAddCourseModal);
-  }
+//   if (cancelAddCourse) {
+//     cancelAddCourse.addEventListener("click", closeAddCourseModal);
+//   }
 
-  if (addCourseBackdrop) {
-    addCourseBackdrop.addEventListener("click", closeAddCourseModal);
-  }
+//   if (addCourseBackdrop) {
+//     addCourseBackdrop.addEventListener("click", closeAddCourseModal);
+//   }
 
-  if (addCourseForm) {
-    addCourseForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+//   if (addCourseForm) {
+//     addCourseForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
 
-      const coursePayload = {
-        course_hash: newCourseHash.value,
-        code: newCourseCode.value,
-        title: newCourseTitle.value,
-        description: newCourseDescription.value || "Unknown",
-        credits: newCourseCredits.value || "Unknown",
-        updated_at: new Date().toISOString().split("T")[0]
-      };
+//       const coursePayload = {
+//         course_hash: newCourseHash.value,
+//         code: newCourseCode.value,
+//         title: newCourseTitle.value,
+//         description: newCourseDescription.value || "Unknown",
+//         credits: newCourseCredits.value || "Unknown",
+//         updated_at: new Date().toISOString().split("T")[0]
+//       };
 
-      if (editingCourseHash) {
-        coursesData = coursesData.map((course) => {
-          if (course.course_hash === editingCourseHash) {
-            return {
-              ...course,
-              ...coursePayload
-            };
-          }
-          return course;
-        });
-      } else {
-        coursesData.push({
-          ...coursePayload,
-          created_at: new Date().toISOString().split("T")[0]
-        });
-      }
+//       if (editingCourseHash) {
+//         coursesData = coursesData.map((course) => {
+//           if (course.course_hash === editingCourseHash) {
+//             return {
+//               ...course,
+//               ...coursePayload
+//             };
+//           }
+//           return course;
+//         });
+//       } else {
+//         coursesData.push({
+//           ...coursePayload,
+//           created_at: new Date().toISOString().split("T")[0]
+//         });
+//       }
 
-      renderCourses(coursesData);
-      closeAddCourseModal();
-    });
-  }
-}
+//       renderCourses(coursesData);
+//       closeAddCourseModal();
+//     });
+//   }
+// }
 
 // =========================
 // Classes Page
 // =========================
-const classesTableBody = document.getElementById("classesTableBody");
-const classSearch = document.getElementById("classSearch");
-const refreshClassesBtn = document.getElementById("refreshClassesBtn");
-const addClassBtn = document.getElementById("addClassBtn");
+// const classesTableBody = document.getElementById("classesTableBody");
+// const classSearch = document.getElementById("classSearch");
+// const refreshClassesBtn = document.getElementById("refreshClassesBtn");
+// const addClassBtn = document.getElementById("addClassBtn");
 
-const classViewModal = document.getElementById("classViewModal");
-const closeClassModalBtn = document.getElementById("closeClassModalBtn");
-const classModalBackdrop = document.getElementById("classModalBackdrop");
+// const classViewModal = document.getElementById("classViewModal");
+// const closeClassModalBtn = document.getElementById("closeClassModalBtn");
+// const classModalBackdrop = document.getElementById("classModalBackdrop");
 
-const detailClassHash = document.getElementById("detailClassHash");
-const detailClassGradeHash = document.getElementById("detailClassGradeHash");
-const detailClassSectionHash = document.getElementById("detailClassSectionHash");
+// const detailClassHash = document.getElementById("detailClassHash");
+// const detailClassGradeHash = document.getElementById("detailClassGradeHash");
+// const detailClassSectionHash = document.getElementById("detailClassSectionHash");
 
-const addClassModal = document.getElementById("addClassModal");
-const addClassBackdrop = document.getElementById("addClassBackdrop");
-const closeAddClassBtn = document.getElementById("closeAddClassBtn");
-const cancelAddClass = document.getElementById("cancelAddClass");
-const addClassForm = document.getElementById("addClassForm");
+// const addClassModal = document.getElementById("addClassModal");
+// const addClassBackdrop = document.getElementById("addClassBackdrop");
+// const closeAddClassBtn = document.getElementById("closeAddClassBtn");
+// const cancelAddClass = document.getElementById("cancelAddClass");
+// const addClassForm = document.getElementById("addClassForm");
 
-const classFormTitle = document.getElementById("classFormTitle");
-const saveClassBtn = document.getElementById("saveClassBtn");
+// const classFormTitle = document.getElementById("classFormTitle");
+// const saveClassBtn = document.getElementById("saveClassBtn");
 
-const newClassHash = document.getElementById("newClassHash");
-const newClassGradeHash = document.getElementById("newClassGradeHash");
-const newClassSectionHash = document.getElementById("newClassSectionHash");
+// const newClassHash = document.getElementById("newClassHash");
+// const newClassGradeHash = document.getElementById("newClassGradeHash");
+// const newClassSectionHash = document.getElementById("newClassSectionHash");
 
-let classesData = [];
-let editingClassHash = null;
+// let classesData = [];
+// let editingClassHash = null;
 
-const mockClasses = [
-  {
-    class_hash: "CLS_001",
-    grade_hash: "GRD_001",
-    section_hash: "SEC_001"
-  },
-  {
-    class_hash: "CLS_002",
-    grade_hash: "GRD_002",
-    section_hash: "SEC_002"
-  }
-];
+// const mockClasses = [
+//   {
+//     class_hash: "CLS_001",
+//     grade_hash: "GRD_001",
+//     section_hash: "SEC_001"
+//   },
+//   {
+//     class_hash: "CLS_002",
+//     grade_hash: "GRD_002",
+//     section_hash: "SEC_002"
+//   }
+// ];
 
-function renderClasses(data) {
-  if (!classesTableBody) return;
+// function renderClasses(data) {
+//   if (!classesTableBody) return;
 
-  if (!data || data.length === 0) {
-    classesTableBody.innerHTML = `
-      <tr>
-        <td colspan="4" class="a-table-empty">No classes found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     classesTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="4" class="a-table-empty">No classes found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  classesTableBody.innerHTML = data.map((item) => `
-    <tr>
-      <td>${formatValue(item.class_hash)}</td>
-      <td>${formatValue(item.grade_hash)}</td>
-      <td>${formatValue(item.section_hash)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewClassItem('${item.class_hash || ""}')">View</button>
-          <button class="a-action-btn" onclick="editClassItem('${item.class_hash || ""}')">Edit</button>
-          <button class="a-action-btn a-action-btn--danger" onclick="deleteClassItem('${item.class_hash || ""}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   classesTableBody.innerHTML = data.map((item) => `
+//     <tr>
+//       <td>${formatValue(item.class_hash)}</td>
+//       <td>${formatValue(item.grade_hash)}</td>
+//       <td>${formatValue(item.section_hash)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewClassItem('${item.class_hash || ""}')">View</button>
+//           <button class="a-action-btn" onclick="editClassItem('${item.class_hash || ""}')">Edit</button>
+//           <button class="a-action-btn a-action-btn--danger" onclick="deleteClassItem('${item.class_hash || ""}')">Delete</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchClasses() {
-  if (!classesTableBody) return;
+// async function fetchClasses() {
+//   if (!classesTableBody) return;
 
-  classesTableBody.innerHTML = `
-    <tr>
-      <td colspan="4" class="a-table-empty">Loading classes...</td>
-    </tr>
-  `;
+//   classesTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="4" class="a-table-empty">Loading classes...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_classes", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_classes", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      classesData = response.map((item) => ({
-        class_hash: item.class_hash || "Unknown",
-        grade_hash: item.grade_hash || "Unknown",
-        section_hash: item.section_hash || "Unknown"
-      }));
-    } else {
-      classesData = mockClasses;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       classesData = response.map((item) => ({
+//         class_hash: item.class_hash || "Unknown",
+//         grade_hash: item.grade_hash || "Unknown",
+//         section_hash: item.section_hash || "Unknown"
+//       }));
+//     } else {
+//       classesData = mockClasses;
+//     }
 
-    renderClasses(classesData);
-  } catch (error) {
-    console.error("Error fetching classes:", error);
-    classesData = mockClasses;
-    renderClasses(classesData);
-  }
-}
+//     renderClasses(classesData);
+//   } catch (error) {
+//     console.error("Error fetching classes:", error);
+//     classesData = mockClasses;
+//     renderClasses(classesData);
+//   }
+// }
 
-function filterClasses() {
-  if (!classSearch) return;
+// function filterClasses() {
+//   if (!classSearch) return;
 
-  const query = classSearch.value.trim().toLowerCase();
+//   const query = classSearch.value.trim().toLowerCase();
 
-  const filtered = classesData.filter((item) =>
-    String(item.class_hash).toLowerCase().includes(query) ||
-    String(item.grade_hash).toLowerCase().includes(query) ||
-    String(item.section_hash).toLowerCase().includes(query)
-  );
+//   const filtered = classesData.filter((item) =>
+//     String(item.class_hash).toLowerCase().includes(query) ||
+//     String(item.grade_hash).toLowerCase().includes(query) ||
+//     String(item.section_hash).toLowerCase().includes(query)
+//   );
 
-  renderClasses(filtered);
-}
+//   renderClasses(filtered);
+// }
 
-function viewClassItem(classHash) {
-  const item = classesData.find((entry) => entry.class_hash === classHash);
-  if (!item || !classViewModal) return;
+// function viewClassItem(classHash) {
+//   const item = classesData.find((entry) => entry.class_hash === classHash);
+//   if (!item || !classViewModal) return;
 
-  detailClassHash.textContent = formatValue(item.class_hash);
-  detailClassGradeHash.textContent = formatValue(item.grade_hash);
-  detailClassSectionHash.textContent = formatValue(item.section_hash);
+//   detailClassHash.textContent = formatValue(item.class_hash);
+//   detailClassGradeHash.textContent = formatValue(item.grade_hash);
+//   detailClassSectionHash.textContent = formatValue(item.section_hash);
 
-  classViewModal.classList.add("show");
-}
+//   classViewModal.classList.add("show");
+// }
 
-function closeClassModal() {
-  if (!classViewModal) return;
-  classViewModal.classList.remove("show");
-}
+// function closeClassModal() {
+//   if (!classViewModal) return;
+//   classViewModal.classList.remove("show");
+// }
 
-function openAddClassModal() {
-  if (!addClassModal) return;
+// function openAddClassModal() {
+//   if (!addClassModal) return;
 
-  editingClassHash = null;
+//   editingClassHash = null;
 
-  if (classFormTitle) classFormTitle.textContent = "Add Class";
-  if (saveClassBtn) saveClassBtn.textContent = "Save Class";
-  if (addClassForm) addClassForm.reset();
+//   if (classFormTitle) classFormTitle.textContent = "Add Class";
+//   if (saveClassBtn) saveClassBtn.textContent = "Save Class";
+//   if (addClassForm) addClassForm.reset();
 
-  if (newClassHash) {
-    newClassHash.disabled = false;
-  }
+//   if (newClassHash) {
+//     newClassHash.disabled = false;
+//   }
 
-  addClassModal.classList.add("show");
-}
+//   addClassModal.classList.add("show");
+// }
 
-function closeAddClassModal() {
-  if (!addClassModal) return;
+// function closeAddClassModal() {
+//   if (!addClassModal) return;
 
-  addClassModal.classList.remove("show");
-  editingClassHash = null;
+//   addClassModal.classList.remove("show");
+//   editingClassHash = null;
 
-  if (addClassForm) addClassForm.reset();
+//   if (addClassForm) addClassForm.reset();
 
-  if (newClassHash) {
-    newClassHash.disabled = false;
-  }
+//   if (newClassHash) {
+//     newClassHash.disabled = false;
+//   }
 
-  if (classFormTitle) classFormTitle.textContent = "Add Class";
-  if (saveClassBtn) saveClassBtn.textContent = "Save Class";
-}
+//   if (classFormTitle) classFormTitle.textContent = "Add Class";
+//   if (saveClassBtn) saveClassBtn.textContent = "Save Class";
+// }
 
-function editClassItem(classHash) {
-  const item = classesData.find((entry) => entry.class_hash === classHash);
-  if (!item || !addClassModal) return;
+// function editClassItem(classHash) {
+//   const item = classesData.find((entry) => entry.class_hash === classHash);
+//   if (!item || !addClassModal) return;
 
-  editingClassHash = classHash;
+//   editingClassHash = classHash;
 
-  if (classFormTitle) classFormTitle.textContent = "Edit Class";
-  if (saveClassBtn) saveClassBtn.textContent = "Update Class";
+//   if (classFormTitle) classFormTitle.textContent = "Edit Class";
+//   if (saveClassBtn) saveClassBtn.textContent = "Update Class";
 
-  newClassHash.value = item.class_hash || "";
-  newClassGradeHash.value = item.grade_hash || "";
-  newClassSectionHash.value = item.section_hash || "";
+//   newClassHash.value = item.class_hash || "";
+//   newClassGradeHash.value = item.grade_hash || "";
+//   newClassSectionHash.value = item.section_hash || "";
 
-  if (newClassHash) {
-    newClassHash.disabled = true;
-  }
+//   if (newClassHash) {
+//     newClassHash.disabled = true;
+//   }
 
-  addClassModal.classList.add("show");
-}
+//   addClassModal.classList.add("show");
+// }
 
-function deleteClassItem(classHash) {
-  const confirmed = confirm(`Are you sure you want to delete class ${classHash}?`);
-  if (!confirmed) return;
+// function deleteClassItem(classHash) {
+//   const confirmed = confirm(`Are you sure you want to delete class ${classHash}?`);
+//   if (!confirmed) return;
 
-  classesData = classesData.filter((item) => item.class_hash !== classHash);
-  renderClasses(classesData);
-}
+//   classesData = classesData.filter((item) => item.class_hash !== classHash);
+//   renderClasses(classesData);
+// }
 
-if (classesTableBody) {
-  fetchClasses();
+// if (classesTableBody) {
+//   fetchClasses();
 
-  if (classSearch) classSearch.addEventListener("input", filterClasses);
-  if (refreshClassesBtn) refreshClassesBtn.addEventListener("click", fetchClasses);
-  if (addClassBtn) addClassBtn.addEventListener("click", openAddClassModal);
+//   if (classSearch) classSearch.addEventListener("input", filterClasses);
+//   if (refreshClassesBtn) refreshClassesBtn.addEventListener("click", fetchClasses);
+//   if (addClassBtn) addClassBtn.addEventListener("click", openAddClassModal);
 
-  if (closeClassModalBtn) {
-    closeClassModalBtn.addEventListener("click", closeClassModal);
-  }
+//   if (closeClassModalBtn) {
+//     closeClassModalBtn.addEventListener("click", closeClassModal);
+//   }
 
-  if (classModalBackdrop) {
-    classModalBackdrop.addEventListener("click", closeClassModal);
-  }
+//   if (classModalBackdrop) {
+//     classModalBackdrop.addEventListener("click", closeClassModal);
+//   }
 
-  if (closeAddClassBtn) {
-    closeAddClassBtn.addEventListener("click", closeAddClassModal);
-  }
+//   if (closeAddClassBtn) {
+//     closeAddClassBtn.addEventListener("click", closeAddClassModal);
+//   }
 
-  if (cancelAddClass) {
-    cancelAddClass.addEventListener("click", closeAddClassModal);
-  }
+//   if (cancelAddClass) {
+//     cancelAddClass.addEventListener("click", closeAddClassModal);
+//   }
 
-  if (addClassBackdrop) {
-    addClassBackdrop.addEventListener("click", closeAddClassModal);
-  }
+//   if (addClassBackdrop) {
+//     addClassBackdrop.addEventListener("click", closeAddClassModal);
+//   }
 
-  if (addClassForm) {
-    addClassForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+//   if (addClassForm) {
+//     addClassForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
 
-      const classPayload = {
-        class_hash: newClassHash.value,
-        grade_hash: newClassGradeHash.value || "Unknown",
-        section_hash: newClassSectionHash.value || "Unknown"
-      };
+//       const classPayload = {
+//         class_hash: newClassHash.value,
+//         grade_hash: newClassGradeHash.value || "Unknown",
+//         section_hash: newClassSectionHash.value || "Unknown"
+//       };
 
-      if (editingClassHash) {
-        classesData = classesData.map((item) => {
-          if (item.class_hash === editingClassHash) {
-            return {
-              ...item,
-              ...classPayload
-            };
-          }
-          return item;
-        });
-      } else {
-        classesData.push(classPayload);
-      }
+//       if (editingClassHash) {
+//         classesData = classesData.map((item) => {
+//           if (item.class_hash === editingClassHash) {
+//             return {
+//               ...item,
+//               ...classPayload
+//             };
+//           }
+//           return item;
+//         });
+//       } else {
+//         classesData.push(classPayload);
+//       }
 
-      renderClasses(classesData);
-      closeAddClassModal();
-    });
-  }
-}
+//       renderClasses(classesData);
+//       closeAddClassModal();
+//     });
+//   }
+// }
 
 // =========================
 // Teacher Timetable Page
 // =========================
-const teacherTimetableTableBody = document.getElementById("teacherTimetableTableBody");
-const teacherTimetableSearch = document.getElementById("teacherTimetableSearch");
-const refreshTeacherTimetableBtn = document.getElementById("refreshTeacherTimetableBtn");
+// const teacherTimetableTableBody = document.getElementById("teacherTimetableTableBody");
+// const teacherTimetableSearch = document.getElementById("teacherTimetableSearch");
+// const refreshTeacherTimetableBtn = document.getElementById("refreshTeacherTimetableBtn");
 
-const teacherTimetableViewModal = document.getElementById("teacherTimetableViewModal");
-const teacherTimetableBackdrop = document.getElementById("teacherTimetableBackdrop");
-const closeTeacherTimetableModalBtn = document.getElementById("closeTeacherTimetableModalBtn");
+// const teacherTimetableViewModal = document.getElementById("teacherTimetableViewModal");
+// const teacherTimetableBackdrop = document.getElementById("teacherTimetableBackdrop");
+// const closeTeacherTimetableModalBtn = document.getElementById("closeTeacherTimetableModalBtn");
 
-const detailTeacherTimetableHash = document.getElementById("detailTeacherTimetableHash");
-const detailTeacherClassGroupHash = document.getElementById("detailTeacherClassGroupHash");
-const detailTeacherTimetableDay = document.getElementById("detailTeacherTimetableDay");
-const detailTeacherTimetablePeriod = document.getElementById("detailTeacherTimetablePeriod");
-const detailTeacherTimetableSectionHash = document.getElementById("detailTeacherTimetableSectionHash");
-const detailTeacherTimetableStart = document.getElementById("detailTeacherTimetableStart");
-const detailTeacherTimetableEnd = document.getElementById("detailTeacherTimetableEnd");
+// const detailTeacherTimetableHash = document.getElementById("detailTeacherTimetableHash");
+// const detailTeacherClassGroupHash = document.getElementById("detailTeacherClassGroupHash");
+// const detailTeacherTimetableDay = document.getElementById("detailTeacherTimetableDay");
+// const detailTeacherTimetablePeriod = document.getElementById("detailTeacherTimetablePeriod");
+// const detailTeacherTimetableSectionHash = document.getElementById("detailTeacherTimetableSectionHash");
+// const detailTeacherTimetableStart = document.getElementById("detailTeacherTimetableStart");
+// const detailTeacherTimetableEnd = document.getElementById("detailTeacherTimetableEnd");
 
-let teacherTimetableData = [];
+// let teacherTimetableData = [];
 
-const mockTeacherTimetable = [
-  {
-    timetable_hash: "TT_001",
-    class_group_hash: "CG_001",
-    day_of_week: "Monday",
-    period_number: 1,
-    section_hash: "SEC_001",
-    start_time: "08:00",
-    end_time: "08:45"
-  },
-  {
-    timetable_hash: "TT_002",
-    class_group_hash: "CG_002",
-    day_of_week: "Tuesday",
-    period_number: 3,
-    section_hash: "SEC_002",
-    start_time: "10:00",
-    end_time: "10:45"
-  }
-];
+// const mockTeacherTimetable = [
+//   {
+//     timetable_hash: "TT_001",
+//     class_group_hash: "CG_001",
+//     day_of_week: "Monday",
+//     period_number: 1,
+//     section_hash: "SEC_001",
+//     start_time: "08:00",
+//     end_time: "08:45"
+//   },
+//   {
+//     timetable_hash: "TT_002",
+//     class_group_hash: "CG_002",
+//     day_of_week: "Tuesday",
+//     period_number: 3,
+//     section_hash: "SEC_002",
+//     start_time: "10:00",
+//     end_time: "10:45"
+//   }
+// ];
 
-function renderTeacherTimetable(data) {
-  if (!teacherTimetableTableBody) return;
+// function renderTeacherTimetable(data) {
+//   if (!teacherTimetableTableBody) return;
 
-  if (!data || data.length === 0) {
-    teacherTimetableTableBody.innerHTML = `
-      <tr>
-        <td colspan="8" class="a-table-empty">No timetable slots found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     teacherTimetableTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="8" class="a-table-empty">No timetable slots found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  teacherTimetableTableBody.innerHTML = data.map((item) => `
-    <tr>
-      <td>${formatValue(item.timetable_hash)}</td>
-      <td>${formatValue(item.class_group_hash)}</td>
-      <td>${formatValue(item.day_of_week)}</td>
-      <td>${formatValue(item.period_number)}</td>
-      <td>${formatValue(item.section_hash)}</td>
-      <td>${formatValue(item.start_time)}</td>
-      <td>${formatValue(item.end_time)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button class="a-action-btn" onclick="viewTeacherTimetableSlot('${item.timetable_hash || ""}')">View</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   teacherTimetableTableBody.innerHTML = data.map((item) => `
+//     <tr>
+//       <td>${formatValue(item.timetable_hash)}</td>
+//       <td>${formatValue(item.class_group_hash)}</td>
+//       <td>${formatValue(item.day_of_week)}</td>
+//       <td>${formatValue(item.period_number)}</td>
+//       <td>${formatValue(item.section_hash)}</td>
+//       <td>${formatValue(item.start_time)}</td>
+//       <td>${formatValue(item.end_time)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button class="a-action-btn" onclick="viewTeacherTimetableSlot('${item.timetable_hash || ""}')">View</button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchTeacherTimetable() {
-  if (!teacherTimetableTableBody) return;
+// async function fetchTeacherTimetable() {
+//   if (!teacherTimetableTableBody) return;
 
-  teacherTimetableTableBody.innerHTML = `
-    <tr>
-      <td colspan="8" class="a-table-empty">Loading timetable...</td>
-    </tr>
-  `;
+//   teacherTimetableTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="8" class="a-table-empty">Loading timetable...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
-    const response = await apiRequest("/get_teacher_timetable", "GET", null, token);
+//   try {
+//     const token = typeof getToken === "function" ? getToken() : localStorage.getItem("token");
+//     const response = await apiRequest("/get_teacher_timetable", "GET", null, token);
 
-    if (Array.isArray(response) && response.length > 0) {
-      teacherTimetableData = response.map((item) => ({
-        timetable_hash: item.timetable_hash || "Unknown",
-        class_group_hash: item.class_group_hash || "Unknown",
-        day_of_week: item.day_of_week || "Unknown",
-        period_number: item.period_number ?? "Unknown",
-        section_hash: item.section_hash || "Unknown",
-        start_time: item.start_time || "Unknown",
-        end_time: item.end_time || "Unknown"
-      }));
-    } else {
-      teacherTimetableData = mockTeacherTimetable;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       teacherTimetableData = response.map((item) => ({
+//         timetable_hash: item.timetable_hash || "Unknown",
+//         class_group_hash: item.class_group_hash || "Unknown",
+//         day_of_week: item.day_of_week || "Unknown",
+//         period_number: item.period_number ?? "Unknown",
+//         section_hash: item.section_hash || "Unknown",
+//         start_time: item.start_time || "Unknown",
+//         end_time: item.end_time || "Unknown"
+//       }));
+//     } else {
+//       teacherTimetableData = mockTeacherTimetable;
+//     }
 
-    renderTeacherTimetable(teacherTimetableData);
-  } catch (error) {
-    console.error("Error fetching teacher timetable:", error);
-    teacherTimetableData = mockTeacherTimetable;
-    renderTeacherTimetable(teacherTimetableData);
-  }
-}
+//     renderTeacherTimetable(teacherTimetableData);
+//   } catch (error) {
+//     console.error("Error fetching teacher timetable:", error);
+//     teacherTimetableData = mockTeacherTimetable;
+//     renderTeacherTimetable(teacherTimetableData);
+//   }
+// }
 
-function filterTeacherTimetable() {
-  if (!teacherTimetableSearch) return;
+// function filterTeacherTimetable() {
+//   if (!teacherTimetableSearch) return;
 
-  const query = teacherTimetableSearch.value.trim().toLowerCase();
+//   const query = teacherTimetableSearch.value.trim().toLowerCase();
 
-  const filtered = teacherTimetableData.filter((item) =>
-    String(item.timetable_hash).toLowerCase().includes(query) ||
-    String(item.class_group_hash).toLowerCase().includes(query) ||
-    String(item.day_of_week).toLowerCase().includes(query) ||
-    String(item.section_hash).toLowerCase().includes(query)
-  );
+//   const filtered = teacherTimetableData.filter((item) =>
+//     String(item.timetable_hash).toLowerCase().includes(query) ||
+//     String(item.class_group_hash).toLowerCase().includes(query) ||
+//     String(item.day_of_week).toLowerCase().includes(query) ||
+//     String(item.section_hash).toLowerCase().includes(query)
+//   );
 
-  renderTeacherTimetable(filtered);
-}
+//   renderTeacherTimetable(filtered);
+// }
 
-function viewTeacherTimetableSlot(timetableHash) {
-  const item = teacherTimetableData.find((entry) => entry.timetable_hash === timetableHash);
-  if (!item || !teacherTimetableViewModal) return;
+// function viewTeacherTimetableSlot(timetableHash) {
+//   const item = teacherTimetableData.find((entry) => entry.timetable_hash === timetableHash);
+//   if (!item || !teacherTimetableViewModal) return;
 
-  detailTeacherTimetableHash.textContent = formatValue(item.timetable_hash);
-  detailTeacherClassGroupHash.textContent = formatValue(item.class_group_hash);
-  detailTeacherTimetableDay.textContent = formatValue(item.day_of_week);
-  detailTeacherTimetablePeriod.textContent = formatValue(item.period_number);
-  detailTeacherTimetableSectionHash.textContent = formatValue(item.section_hash);
-  detailTeacherTimetableStart.textContent = formatValue(item.start_time);
-  detailTeacherTimetableEnd.textContent = formatValue(item.end_time);
+//   detailTeacherTimetableHash.textContent = formatValue(item.timetable_hash);
+//   detailTeacherClassGroupHash.textContent = formatValue(item.class_group_hash);
+//   detailTeacherTimetableDay.textContent = formatValue(item.day_of_week);
+//   detailTeacherTimetablePeriod.textContent = formatValue(item.period_number);
+//   detailTeacherTimetableSectionHash.textContent = formatValue(item.section_hash);
+//   detailTeacherTimetableStart.textContent = formatValue(item.start_time);
+//   detailTeacherTimetableEnd.textContent = formatValue(item.end_time);
 
-  teacherTimetableViewModal.classList.add("show");
-}
+//   teacherTimetableViewModal.classList.add("show");
+// }
 
-function closeTeacherTimetableModal() {
-  if (!teacherTimetableViewModal) return;
-  teacherTimetableViewModal.classList.remove("show");
-}
+// function closeTeacherTimetableModal() {
+//   if (!teacherTimetableViewModal) return;
+//   teacherTimetableViewModal.classList.remove("show");
+// }
 
-if (teacherTimetableTableBody) {
-  fetchTeacherTimetable();
+// if (teacherTimetableTableBody) {
+//   fetchTeacherTimetable();
 
-  if (teacherTimetableSearch) {
-    teacherTimetableSearch.addEventListener("input", filterTeacherTimetable);
-  }
+//   if (teacherTimetableSearch) {
+//     teacherTimetableSearch.addEventListener("input", filterTeacherTimetable);
+//   }
 
-  if (refreshTeacherTimetableBtn) {
-    refreshTeacherTimetableBtn.addEventListener("click", fetchTeacherTimetable);
-  }
+//   if (refreshTeacherTimetableBtn) {
+//     refreshTeacherTimetableBtn.addEventListener("click", fetchTeacherTimetable);
+//   }
 
-  if (closeTeacherTimetableModalBtn) {
-    closeTeacherTimetableModalBtn.addEventListener("click", closeTeacherTimetableModal);
-  }
+//   if (closeTeacherTimetableModalBtn) {
+//     closeTeacherTimetableModalBtn.addEventListener("click", closeTeacherTimetableModal);
+//   }
 
-  if (teacherTimetableBackdrop) {
-    teacherTimetableBackdrop.addEventListener("click", closeTeacherTimetableModal);
-  }
-}
+//   if (teacherTimetableBackdrop) {
+//     teacherTimetableBackdrop.addEventListener("click", closeTeacherTimetableModal);
+//   }
+// }
 
 // =========================
 // Class Timetable
 // =========================
-const classTimetableTableBody = document.getElementById("classTimetableTableBody");
-const classTimetableSearch = document.getElementById("classTimetableSearch");
-const refreshClassTimetableBtn = document.getElementById("refreshClassTimetableBtn");
+// const classTimetableTableBody = document.getElementById("classTimetableTableBody");
+// const classTimetableSearch = document.getElementById("classTimetableSearch");
+// const refreshClassTimetableBtn = document.getElementById("refreshClassTimetableBtn");
 
-const classTimetableViewModal = document.getElementById("classTimetableViewModal");
-const classTimetableBackdrop = document.getElementById("classTimetableBackdrop");
-const closeClassTimetableModalBtn = document.getElementById("closeClassTimetableModalBtn");
+// const classTimetableViewModal = document.getElementById("classTimetableViewModal");
+// const classTimetableBackdrop = document.getElementById("classTimetableBackdrop");
+// const closeClassTimetableModalBtn = document.getElementById("closeClassTimetableModalBtn");
 
-const detailClassTimetableHash = document.getElementById("detailClassTimetableHash");
-const detailClassTimetableDay = document.getElementById("detailClassTimetableDay");
-const detailClassTimetablePeriod = document.getElementById("detailClassTimetablePeriod");
-const detailClassTimetableSectionHash = document.getElementById("detailClassTimetableSectionHash");
-const detailClassTimetableStart = document.getElementById("detailClassTimetableStart");
-const detailClassTimetableEnd = document.getElementById("detailClassTimetableEnd");
+// const detailClassTimetableHash = document.getElementById("detailClassTimetableHash");
+// const detailClassTimetableDay = document.getElementById("detailClassTimetableDay");
+// const detailClassTimetablePeriod = document.getElementById("detailClassTimetablePeriod");
+// const detailClassTimetableSectionHash = document.getElementById("detailClassTimetableSectionHash");
+// const detailClassTimetableStart = document.getElementById("detailClassTimetableStart");
+// const detailClassTimetableEnd = document.getElementById("detailClassTimetableEnd");
 
-let classTimetableData = [];
+// let classTimetableData = [];
 
-const mockClassTimetable = [
-  {
-    timetable_hash: "CTT_001",
-    day_of_week: 1,
-    period_number: 1,
-    section_hash: "SEC_001",
-    start_time: "08:00",
-    end_time: "08:45",
-    created_at: "2026-03-01",
-    updated_at: "2026-03-01"
-  },
-  {
-    timetable_hash: "CTT_002",
-    day_of_week: 3,
-    period_number: 2,
-    section_hash: "SEC_002",
-    start_time: "09:00",
-    end_time: "09:45",
-    created_at: "2026-03-02",
-    updated_at: "2026-03-02"
-  }
-];
+// const mockClassTimetable = [
+//   {
+//     timetable_hash: "CTT_001",
+//     day_of_week: 1,
+//     period_number: 1,
+//     section_hash: "SEC_001",
+//     start_time: "08:00",
+//     end_time: "08:45",
+//     created_at: "2026-03-01",
+//     updated_at: "2026-03-01"
+//   },
+//   {
+//     timetable_hash: "CTT_002",
+//     day_of_week: 3,
+//     period_number: 2,
+//     section_hash: "SEC_002",
+//     start_time: "09:00",
+//     end_time: "09:45",
+//     created_at: "2026-03-02",
+//     updated_at: "2026-03-02"
+//   }
+// ];
 
-function formatDayOfWeek(value) {
-  const dayMap = {
-    1: "Monday",
-    2: "Tuesday",
-    3: "Wednesday",
-    4: "Thursday",
-    5: "Friday",
-    6: "Saturday",
-    7: "Sunday"
-  };
+// function formatDayOfWeek(value) {
+//   const dayMap = {
+//     1: "Monday",
+//     2: "Tuesday",
+//     3: "Wednesday",
+//     4: "Thursday",
+//     5: "Friday",
+//     6: "Saturday",
+//     7: "Sunday"
+//   };
 
-  if (dayMap[value]) return dayMap[value];
-  return formatValue(value);
-}
+//   if (dayMap[value]) return dayMap[value];
+//   return formatValue(value);
+// }
 
-function renderClassTimetable(data) {
-  if (!classTimetableTableBody) return;
+// function renderClassTimetable(data) {
+//   if (!classTimetableTableBody) return;
 
-  if (!data || data.length === 0) {
-    classTimetableTableBody.innerHTML = `
-      <tr>
-        <td colspan="7" class="a-table-empty">No timetable slots found.</td>
-      </tr>
-    `;
-    return;
-  }
+//   if (!data || data.length === 0) {
+//     classTimetableTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="7" class="a-table-empty">No timetable slots found.</td>
+//       </tr>
+//     `;
+//     return;
+//   }
 
-  classTimetableTableBody.innerHTML = data.map((item) => `
-    <tr>
-      <td>${formatValue(item.timetable_hash)}</td>
-      <td>${formatDayOfWeek(item.day_of_week)}</td>
-      <td>${formatValue(item.period_number)}</td>
-      <td>${formatValue(item.section_hash)}</td>
-      <td>${formatValue(item.start_time)}</td>
-      <td>${formatValue(item.end_time)}</td>
-      <td>
-        <div class="a-table-actions">
-          <button
-            class="a-action-btn"
-            onclick="viewClassTimetable('${item.timetable_hash || ""}')"
-          >
-            View
-          </button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
+//   classTimetableTableBody.innerHTML = data.map((item) => `
+//     <tr>
+//       <td>${formatValue(item.timetable_hash)}</td>
+//       <td>${formatDayOfWeek(item.day_of_week)}</td>
+//       <td>${formatValue(item.period_number)}</td>
+//       <td>${formatValue(item.section_hash)}</td>
+//       <td>${formatValue(item.start_time)}</td>
+//       <td>${formatValue(item.end_time)}</td>
+//       <td>
+//         <div class="a-table-actions">
+//           <button
+//             class="a-action-btn"
+//             onclick="viewClassTimetable('${item.timetable_hash || ""}')"
+//           >
+//             View
+//           </button>
+//         </div>
+//       </td>
+//     </tr>
+//   `).join("");
+// }
 
-async function fetchClassTimetable() {
-  if (!classTimetableTableBody) return;
+// async function fetchClassTimetable() {
+//   if (!classTimetableTableBody) return;
 
-  classTimetableTableBody.innerHTML = `
-    <tr>
-      <td colspan="7" class="a-table-empty">Loading timetable...</td>
-    </tr>
-  `;
+//   classTimetableTableBody.innerHTML = `
+//     <tr>
+//       <td colspan="7" class="a-table-empty">Loading timetable...</td>
+//     </tr>
+//   `;
 
-  try {
-    const token =
-      typeof getToken === "function"
-        ? getToken()
-        : localStorage.getItem("token");
+//   try {
+//     const token =
+//       typeof getToken === "function"
+//         ? getToken()
+//         : localStorage.getItem("token");
 
-    const response = await apiRequest("/get_class_timetable", "GET", null, token);
+//     const response = await apiRequest("/get_class_timetable", "GET", null, token);
 
-    console.log("get_class_timetable response:", response);
+//     console.log("get_class_timetable response:", response);
 
-    if (Array.isArray(response) && response.length > 0) {
-      classTimetableData = response.map((item) => ({
-        timetable_hash: item.timetable_hash || "Unknown",
-        day_of_week: item.day_of_week ?? "Unknown",
-        period_number: item.period_number ?? "Unknown",
-        section_hash: item.section_hash || "Unknown",
-        start_time: item.start_time || "Unknown",
-        end_time: item.end_time || "Unknown",
-        created_at: item.created_at || "Unknown",
-        updated_at: item.updated_at || "Unknown"
-      }));
-    } else if (response && Array.isArray(response.data) && response.data.length > 0) {
-      classTimetableData = response.data.map((item) => ({
-        timetable_hash: item.timetable_hash || "Unknown",
-        day_of_week: item.day_of_week ?? "Unknown",
-        period_number: item.period_number ?? "Unknown",
-        section_hash: item.section_hash || "Unknown",
-        start_time: item.start_time || "Unknown",
-        end_time: item.end_time || "Unknown",
-        created_at: item.created_at || "Unknown",
-        updated_at: item.updated_at || "Unknown"
-      }));
-    } else {
-      classTimetableData = mockClassTimetable;
-    }
+//     if (Array.isArray(response) && response.length > 0) {
+//       classTimetableData = response.map((item) => ({
+//         timetable_hash: item.timetable_hash || "Unknown",
+//         day_of_week: item.day_of_week ?? "Unknown",
+//         period_number: item.period_number ?? "Unknown",
+//         section_hash: item.section_hash || "Unknown",
+//         start_time: item.start_time || "Unknown",
+//         end_time: item.end_time || "Unknown",
+//         created_at: item.created_at || "Unknown",
+//         updated_at: item.updated_at || "Unknown"
+//       }));
+//     } else if (response && Array.isArray(response.data) && response.data.length > 0) {
+//       classTimetableData = response.data.map((item) => ({
+//         timetable_hash: item.timetable_hash || "Unknown",
+//         day_of_week: item.day_of_week ?? "Unknown",
+//         period_number: item.period_number ?? "Unknown",
+//         section_hash: item.section_hash || "Unknown",
+//         start_time: item.start_time || "Unknown",
+//         end_time: item.end_time || "Unknown",
+//         created_at: item.created_at || "Unknown",
+//         updated_at: item.updated_at || "Unknown"
+//       }));
+//     } else {
+//       classTimetableData = mockClassTimetable;
+//     }
 
-    renderClassTimetable(classTimetableData);
-  } catch (error) {
-    console.error("Error fetching class timetable:", error);
-    classTimetableData = mockClassTimetable;
-    renderClassTimetable(classTimetableData);
-  }
-}
+//     renderClassTimetable(classTimetableData);
+//   } catch (error) {
+//     console.error("Error fetching class timetable:", error);
+//     classTimetableData = mockClassTimetable;
+//     renderClassTimetable(classTimetableData);
+//   }
+// }
 
-function filterClassTimetable() {
-  if (!classTimetableSearch) return;
+// function filterClassTimetable() {
+//   if (!classTimetableSearch) return;
 
-  const query = classTimetableSearch.value.trim().toLowerCase();
+//   const query = classTimetableSearch.value.trim().toLowerCase();
 
-  const filtered = classTimetableData.filter((item) =>
-    String(item.timetable_hash).toLowerCase().includes(query) ||
-    String(item.section_hash).toLowerCase().includes(query) ||
-    String(item.day_of_week).toLowerCase().includes(query) ||
-    formatDayOfWeek(item.day_of_week).toLowerCase().includes(query)
-  );
+//   const filtered = classTimetableData.filter((item) =>
+//     String(item.timetable_hash).toLowerCase().includes(query) ||
+//     String(item.section_hash).toLowerCase().includes(query) ||
+//     String(item.day_of_week).toLowerCase().includes(query) ||
+//     formatDayOfWeek(item.day_of_week).toLowerCase().includes(query)
+//   );
 
-  renderClassTimetable(filtered);
-}
+//   renderClassTimetable(filtered);
+// }
 
-function viewClassTimetable(timetableHash) {
-  const item = classTimetableData.find((entry) => entry.timetable_hash === timetableHash);
-  if (!item || !classTimetableViewModal) return;
+// function viewClassTimetable(timetableHash) {
+//   const item = classTimetableData.find((entry) => entry.timetable_hash === timetableHash);
+//   if (!item || !classTimetableViewModal) return;
 
-  detailClassTimetableHash.textContent = formatValue(item.timetable_hash);
-  detailClassTimetableDay.textContent = formatDayOfWeek(item.day_of_week);
-  detailClassTimetablePeriod.textContent = formatValue(item.period_number);
-  detailClassTimetableSectionHash.textContent = formatValue(item.section_hash);
-  detailClassTimetableStart.textContent = formatValue(item.start_time);
-  detailClassTimetableEnd.textContent = formatValue(item.end_time);
+//   detailClassTimetableHash.textContent = formatValue(item.timetable_hash);
+//   detailClassTimetableDay.textContent = formatDayOfWeek(item.day_of_week);
+//   detailClassTimetablePeriod.textContent = formatValue(item.period_number);
+//   detailClassTimetableSectionHash.textContent = formatValue(item.section_hash);
+//   detailClassTimetableStart.textContent = formatValue(item.start_time);
+//   detailClassTimetableEnd.textContent = formatValue(item.end_time);
 
-  classTimetableViewModal.classList.add("show");
-}
+//   classTimetableViewModal.classList.add("show");
+// }
 
-function closeClassTimetableModal() {
-  if (!classTimetableViewModal) return;
-  classTimetableViewModal.classList.remove("show");
-}
+// function closeClassTimetableModal() {
+//   if (!classTimetableViewModal) return;
+//   classTimetableViewModal.classList.remove("show");
+// }
 
-if (classTimetableTableBody) {
-  fetchClassTimetable();
+// if (classTimetableTableBody) {
+//   fetchClassTimetable();
 
-  if (classTimetableSearch) {
-    classTimetableSearch.addEventListener("input", filterClassTimetable);
-  }
+//   if (classTimetableSearch) {
+//     classTimetableSearch.addEventListener("input", filterClassTimetable);
+//   }
 
-  if (refreshClassTimetableBtn) {
-    refreshClassTimetableBtn.addEventListener("click", fetchClassTimetable);
-  }
+//   if (refreshClassTimetableBtn) {
+//     refreshClassTimetableBtn.addEventListener("click", fetchClassTimetable);
+//   }
 
-  if (closeClassTimetableModalBtn) {
-    closeClassTimetableModalBtn.addEventListener("click", closeClassTimetableModal);
-  }
+//   if (closeClassTimetableModalBtn) {
+//     closeClassTimetableModalBtn.addEventListener("click", closeClassTimetableModal);
+//   }
 
-  if (classTimetableBackdrop) {
-    classTimetableBackdrop.addEventListener("click", closeClassTimetableModal);
-  }
-}
+//   if (classTimetableBackdrop) {
+//     classTimetableBackdrop.addEventListener("click", closeClassTimetableModal);
+//   }
+// }
