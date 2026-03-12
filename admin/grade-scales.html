@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Grade Scales</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Grade Scales</h1>
+          <p class="a-desc">Manage grade scales and step definitions.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshGradeScalesBtn">Refresh</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="gradeScaleSearch"
+            class="a-search"
+            placeholder="Search by scale hash or name"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Scale Hash</th>
+                <th>Name</th>
+                <th>Created At</th>
+                <th>Steps Count</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="gradeScalesTableBody">
+              <tr>
+                <td colspan="5" class="a-table-empty">Loading grade scales...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Modal -->
+  <div class="a-modal" id="gradeScaleViewModal">
+    <div class="a-modal__backdrop" id="gradeScaleBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Grade Scale Details</h2>
+        <button class="a-modal__close" type="button" id="closeGradeScaleModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Scale Hash</span>
+            <span class="a-detail-value" id="detailScaleHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Name</span>
+            <span class="a-detail-value" id="detailScaleName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailScaleCreatedAt">—</span>
+          </div>
+
+          <div class="a-detail-item" style="grid-column: 1 / -1;">
+            <span class="a-detail-label">Steps</span>
+            <span class="a-detail-value" id="detailScaleSteps">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Step Modal -->
+  <div class="a-modal" id="addGradeStepModal">
+    <div class="a-modal__backdrop" id="addGradeStepBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Add Grade Scale Step</h2>
+        <button class="a-modal__close" type="button" id="closeAddGradeStepBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addGradeStepForm" class="a-form">
+          <div class="a-form-row">
+            <label>Scale Hash</label>
+            <input type="text" id="gradeStepScaleHash" required readonly>
+          </div>
+
+          <div class="a-form-row">
+            <label>Letter</label>
+            <input type="text" id="gradeStepLetter" placeholder="A" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Min Percent</label>
+            <input type="number" id="gradeStepMinPercent" step="0.01" placeholder="90" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>GPA Points</label>
+            <input type="number" id="gradeStepGpaPoints" step="0.01" placeholder="4.0">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddGradeStep">Cancel</button>
+            <button type="submit" class="a-btn" id="saveGradeStepBtn">Save Step</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/grade-scales.js"></script>
+</body>
+</html>

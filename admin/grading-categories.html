@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Grading Categories</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Grading Categories</h1>
+          <p class="a-desc">Manage grading categories and their weights.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshGradingCategoriesBtn">
+            Refresh
+          </button>
+
+          <button class="a-btn" type="button" id="addGradingCategoryBtn">
+            + Add Category
+          </button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="gradingCategorySearch"
+            class="a-search"
+            placeholder="Search by hash or name"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Category Hash</th>
+                <th>Name</th>
+                <th>Weight %</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="gradingCategoriesTableBody">
+              <tr>
+                <td colspan="5" class="a-table-empty">Loading grading categories...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Modal -->
+  <div class="a-modal" id="gradingCategoryViewModal">
+    <div class="a-modal__backdrop" id="gradingCategoryBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Grading Category Details</h2>
+        <button class="a-modal__close" type="button" id="closeGradingCategoryModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Category Hash</span>
+            <span class="a-detail-value" id="detailCategoryHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Name</span>
+            <span class="a-detail-value" id="detailCategoryName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Weight %</span>
+            <span class="a-detail-value" id="detailCategoryWeight">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailCategoryCreatedAt">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="a-modal" id="addGradingCategoryModal">
+    <div class="a-modal__backdrop" id="addGradingCategoryBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2 id="gradingCategoryFormTitle">Add Grading Category</h2>
+        <button class="a-modal__close" type="button" id="closeAddGradingCategoryBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addGradingCategoryForm" class="a-form">
+          <div class="a-form-row">
+            <label>Section Hash</label>
+            <input type="text" id="gradingCategorySectionHash" placeholder="Required for create">
+          </div>
+
+          <div class="a-form-row">
+            <label>Name</label>
+            <input type="text" id="gradingCategoryNameInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Weight Percent</label>
+            <input type="number" id="gradingCategoryWeightInput" step="0.01" placeholder="20" required>
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddGradingCategory">Cancel</button>
+            <button type="submit" class="a-btn" id="saveGradingCategoryBtn">Save Category</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/grading-categories.js"></script>
+</body>
+</html>

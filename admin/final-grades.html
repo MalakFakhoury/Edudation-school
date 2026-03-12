@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin | Final Grades</title>
+
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="./admin.css">
+
+</head>
+
+<body>
+
+<div class="a-layout">
+
+<div id="sidebar-container"></div>
+
+<main class="a-main">
+
+<header class="a-topbar">
+
+<div>
+<h1 class="a-title">Final Grades</h1>
+<p class="a-desc">Review and lock final grades.</p>
+</div>
+
+<div class="a-actions">
+
+<button
+class="a-btn a-btn--ghost"
+id="refreshFinalGradesBtn"
+>
+Refresh
+</button>
+
+<button
+class="a-btn"
+id="lockFinalGradesBtn"
+>
+Lock Final Grades
+</button>
+
+</div>
+
+</header>
+
+<section class="a-page-tools">
+
+<div class="a-search-wrap">
+
+<input
+type="text"
+id="finalGradesSearch"
+class="a-search"
+placeholder="Search student..."
+>
+
+</div>
+
+</section>
+
+<section class="a-table-card">
+
+<div class="a-table-wrap">
+
+<table class="a-table">
+
+<thead>
+
+<tr>
+
+<th>Student Hash</th>
+<th>Name</th>
+<th>Course</th>
+<th>Percent</th>
+<th>Letter</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="finalGradesTableBody">
+
+<tr>
+<td colspan="6" class="a-table-empty">
+Loading final grades...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<script src="../config/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/load-sidebar.js"></script>
+<script src="../assets/js/admin/final-grades.js"></script>
+
+</body>
+</html>
