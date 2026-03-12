@@ -463,3 +463,19 @@
 body{
   overflow-y: auto;
 }
+
+.a-form textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font: inherit;
+  resize: vertical;
+  background: #fff;
+}
+
+.a-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}

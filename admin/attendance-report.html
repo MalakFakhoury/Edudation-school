@@ -1,23 +1,162 @@
-<h1>Attendance Report</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Attendance Report</title>
 
-<input id="termHashInput" placeholder="Term Hash">
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
 
-<button onclick="loadAttendanceReport()">
-Load Report
-</button>
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Attendance Report</h1>
+          <p class="a-desc">Review attendance performance by term.</p>
+        </div>
 
-<table class="a-table">
-<thead>
-<tr>
-<th>Student</th>
-<th>Total</th>
-<th>Present</th>
-<th>Absent</th>
-<th>Late</th>
-<th>Excused</th>
-<th>%</th>
-</tr>
-</thead>
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshAttendanceReportBtn">
+            Refresh
+          </button>
+        </div>
+      </header>
 
-<tbody id="attendanceReportBody"></tbody>
-</table>
+      <section class="a-page-tools">
+        <div class="a-search-wrap" style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input
+            type="text"
+            id="termHashInput"
+            class="a-search"
+            placeholder="Enter term hash"
+          />
+
+          <button class="a-btn" type="button" id="loadAttendanceReportBtn">
+            Load Report
+          </button>
+
+          <input
+            type="text"
+            id="attendanceReportSearch"
+            class="a-search"
+            placeholder="Search by student hash, username, or name"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Student Hash</th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Total Days</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Late</th>
+                <th>Excused</th>
+                <th>Attendance %</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceReportTableBody">
+              <tr>
+                <td colspan="11" class="a-table-empty">Enter a term hash and load report.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="attendanceReportViewModal">
+    <div class="a-modal__backdrop" id="attendanceReportBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Attendance Report Details</h2>
+        <button class="a-modal__close" type="button" id="closeAttendanceReportModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Student Hash</span>
+            <span class="a-detail-value" id="detailReportStudentHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Username</span>
+            <span class="a-detail-value" id="detailReportUsername">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">First Name</span>
+            <span class="a-detail-value" id="detailReportFirstName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Last Name</span>
+            <span class="a-detail-value" id="detailReportLastName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Range From</span>
+            <span class="a-detail-value" id="detailReportRangeFrom">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Range To</span>
+            <span class="a-detail-value" id="detailReportRangeTo">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Total Days</span>
+            <span class="a-detail-value" id="detailReportTotalDays">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Present Days</span>
+            <span class="a-detail-value" id="detailReportPresentDays">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Absent Days</span>
+            <span class="a-detail-value" id="detailReportAbsentDays">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Late Days</span>
+            <span class="a-detail-value" id="detailReportLateDays">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Excused Days</span>
+            <span class="a-detail-value" id="detailReportExcusedDays">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Attendance %</span>
+            <span class="a-detail-value" id="detailReportAttendancePercent">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/attendance-report.js"></script>
+</body>
+</html>

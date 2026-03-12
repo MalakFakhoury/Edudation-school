@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin | Announcements</title>
+
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+
+<div class="a-layout">
+
+<div id="sidebar-container"></div>
+
+<main class="a-main">
+
+<header class="a-topbar">
+
+<div>
+<h1 class="a-title">Admin Announcements</h1>
+<p class="a-desc">Manage school announcements.</p>
+</div>
+
+<div class="a-actions">
+
+<button
+class="a-btn a-btn--ghost"
+type="button"
+id="refreshAnnouncementsBtn"
+>
+Refresh
+</button>
+
+<button
+class="a-btn"
+type="button"
+id="addAnnouncementBtn"
+>
++ Add Announcement
+</button>
+
+</div>
+
+</header>
+
+
+<section class="a-page-tools">
+
+<div class="a-search-wrap">
+
+<input
+type="text"
+id="announcementSearch"
+class="a-search"
+placeholder="Search announcements..."
+>
+
+</div>
+
+</section>
+
+
+<section class="a-table-card">
+
+<div class="a-table-wrap">
+
+<table class="a-table">
+
+<thead>
+<tr>
+
+<th>Announcement Hash</th>
+<th>Title</th>
+<th>Created At</th>
+<th>Expires At</th>
+<th>Actions</th>
+
+</tr>
+</thead>
+
+<tbody id="announcementsTableBody">
+
+<tr>
+<td colspan="5" class="a-table-empty">
+Loading announcements...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<!-- VIEW MODAL -->
+
+<div class="a-modal" id="announcementViewModal">
+
+<div
+class="a-modal__backdrop"
+id="announcementBackdrop"
+></div>
+
+
+<div class="a-modal__content">
+
+<div class="a-modal__header">
+
+<h2>Announcement Details</h2>
+
+<button
+class="a-modal__close"
+type="button"
+id="closeAnnouncementModalBtn"
+>
+×
+</button>
+
+</div>
+
+
+<div class="a-modal__body">
+
+<div class="a-detail-grid">
+
+<div class="a-detail-item">
+<span class="a-detail-label">Title</span>
+<span
+class="a-detail-value"
+id="detailAnnouncementTitle"
+>
+—
+</span>
+</div>
+
+<div class="a-detail-item">
+<span class="a-detail-label">Created At</span>
+<span
+class="a-detail-value"
+id="detailAnnouncementCreated"
+>
+—
+</span>
+</div>
+
+<div class="a-detail-item">
+<span class="a-detail-label">Expires At</span>
+<span
+class="a-detail-value"
+id="detailAnnouncementExpires"
+>
+—
+</span>
+</div>
+
+<div
+class="a-detail-item"
+style="grid-column:1/-1;"
+>
+
+<span class="a-detail-label">Content</span>
+
+<span
+class="a-detail-value"
+id="detailAnnouncementContent"
+>
+—
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ADD ANNOUNCEMENT MODAL -->
+
+<div class="a-modal" id="addAnnouncementModal">
+
+<div
+class="a-modal__backdrop"
+id="addAnnouncementBackdrop"
+></div>
+
+
+<div class="a-modal__content">
+
+<div class="a-modal__header">
+
+<h2 id="announcementFormTitle">
+Add Announcement
+</h2>
+
+<button
+class="a-modal__close"
+type="button"
+id="closeAddAnnouncementBtn"
+>
+×
+</button>
+
+</div>
+
+
+<div class="a-modal__body">
+
+<form
+id="addAnnouncementForm"
+class="a-form"
+>
+
+<div class="a-form-row">
+
+<label for="announcementTitle">
+Title
+</label>
+
+<input
+type="text"
+id="announcementTitle"
+placeholder="Enter announcement title"
+required
+>
+
+</div>
+
+
+<div class="a-form-row">
+
+<label for="announcementContent">
+Content
+</label>
+
+<textarea
+id="announcementContent"
+placeholder="Enter announcement content"
+rows="5"
+></textarea>
+
+</div>
+
+
+<div class="a-form-row">
+
+<label for="announcementExpires">
+Expires At
+</label>
+
+<input
+type="text"
+id="announcementExpires"
+placeholder="YYYY-MM-DD"
+>
+
+</div>
+
+
+<div class="a-form-actions">
+
+<button
+type="button"
+class="a-btn a-btn--ghost"
+id="cancelAddAnnouncement"
+>
+Cancel
+</button>
+
+<button
+type="submit"
+class="a-btn"
+id="saveAnnouncementBtn"
+>
+Save Announcement
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script src="../config/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/load-sidebar.js"></script>
+<script src="../assets/js/admin/admin-announcements.js"></script>
+
+</body>
+</html>
