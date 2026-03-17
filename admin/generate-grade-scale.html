@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Generate Grade Scale</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Generate Grade Scale</h1>
+          <p class="a-desc">Create a new grade scale.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshGradeScaleBtn">Refresh</button>
+          <button class="a-btn" type="button" id="openGradeScaleModalBtn">+ Add Grade Scale</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <input
+          type="text"
+          id="gradeScaleSearch"
+          class="a-search"
+          placeholder="Search by grade scale name"
+        />
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="gradeScaleTableBody">
+              <tr>
+                <td colspan="2" class="a-table-empty">No grade scales yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="gradeScaleModal">
+    <div class="a-modal__backdrop" id="gradeScaleBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Create Grade Scale</h2>
+        <button class="a-modal__close" type="button" id="closeGradeScaleModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="gradeScaleForm" class="a-form">
+          <div class="a-form-row">
+            <label>Grade Scale Name</label>
+            <input type="text" id="gradeScaleNameInput" required />
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelGradeScaleBtn">Cancel</button>
+            <button type="submit" class="a-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/generate-grade-scale.js"></script>
+</body>
+</html>

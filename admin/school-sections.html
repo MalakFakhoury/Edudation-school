@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | School Sections</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">School Sections</h1>
+          <p class="a-desc">Manage school sections grouped by grade.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshSchoolSectionsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addSchoolSectionBtn">+ Add Section</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <input
+          type="text"
+          id="schoolSectionsSearch"
+          class="a-search"
+          placeholder="Search by grade or section"
+        />
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Grade Hash</th>
+                <th>Grade Name</th>
+                <th>Section Hash</th>
+                <th>Section Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="schoolSectionsTableBody">
+              <tr>
+                <td colspan="5" class="a-table-empty">No school sections found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="addSchoolSectionModal">
+    <div class="a-modal__backdrop" id="addSchoolSectionBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Add School Section</h2>
+        <button class="a-modal__close" type="button" id="closeSchoolSectionModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="schoolSectionForm" class="a-form">
+          <div class="a-form-row">
+            <label>Level Hash</label>
+            <input type="text" id="schoolSectionLevelHashInput" required />
+          </div>
+
+          <div class="a-form-row">
+            <label>Section Name</label>
+            <input type="text" id="schoolSectionNameInput" required />
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelSchoolSectionBtn">Cancel</button>
+            <button type="submit" class="a-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/school-sections.js"></script>
+</body>
+</html>
