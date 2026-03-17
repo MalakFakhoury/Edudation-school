@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Bulk Create Timetable</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Bulk Create Timetable</h1>
+          <p class="a-desc">Create multiple timetable slots for one term and one class group.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshBulkTimetableBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addTimetableSlotBtn">+ Add Slot</button>
+          <button class="a-btn" type="button" id="submitBulkTimetableBtn">Submit Bulk Create</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap" style="display:flex; gap:12px; flex-wrap:wrap; max-width:100%;">
+          <input
+            type="text"
+            id="bulkTimetableTermHashInput"
+            class="a-search"
+            placeholder="Enter term hash"
+          />
+
+          <input
+            type="text"
+            id="bulkTimetableClassGroupHashInput"
+            class="a-search"
+            placeholder="Enter class group hash"
+          />
+
+          <input
+            type="text"
+            id="bulkTimetableSearch"
+            class="a-search"
+            placeholder="Search by day, period, section, or time"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Day Of Week</th>
+                <th>Period Number</th>
+                <th>Section Hash</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bulkTimetableTableBody">
+              <tr>
+                <td colspan="6" class="a-table-empty">No slots added yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Created</th>
+                <th>Failed</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="bulkTimetableResultBody">
+              <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Slot Modal -->
+  <div class="a-modal" id="bulkTimetableViewModal">
+    <div class="a-modal__backdrop" id="bulkTimetableViewBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Timetable Slot Details</h2>
+        <button class="a-modal__close" type="button" id="closeBulkTimetableViewModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Day Of Week</span>
+            <span class="a-detail-value" id="detailBulkDayOfWeek">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Period Number</span>
+            <span class="a-detail-value" id="detailBulkPeriodNumber">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Section Hash</span>
+            <span class="a-detail-value" id="detailBulkSectionHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Start Time</span>
+            <span class="a-detail-value" id="detailBulkStartTime">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">End Time</span>
+            <span class="a-detail-value" id="detailBulkEndTime">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Slot Modal -->
+  <div class="a-modal" id="bulkTimetableSlotModal">
+    <div class="a-modal__backdrop" id="bulkTimetableSlotBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2 id="bulkTimetableSlotModalTitle">Add Timetable Slot</h2>
+        <button class="a-modal__close" type="button" id="closeBulkTimetableSlotModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="bulkTimetableSlotForm" class="a-form">
+          <input type="hidden" id="bulkTimetableEditIndex" />
+
+          <div class="a-form-row">
+            <label>Day Of Week</label>
+            <select id="bulkDayOfWeekInput" required>
+              <option value="">Select day</option>
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+          </div>
+
+          <div class="a-form-row">
+            <label>Period Number</label>
+            <input type="number" id="bulkPeriodNumberInput" min="1" required />
+          </div>
+
+          <div class="a-form-row">
+            <label>Section Hash</label>
+            <input type="text" id="bulkSectionHashInput" required />
+          </div>
+
+          <div class="a-form-row">
+            <label>Start Time</label>
+            <input type="time" id="bulkStartTimeInput" required />
+          </div>
+
+          <div class="a-form-row">
+            <label>End Time</label>
+            <input type="time" id="bulkEndTimeInput" required />
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelBulkTimetableSlotBtn">Cancel</button>
+            <button type="submit" class="a-btn" id="saveBulkTimetableSlotBtn">Save Slot</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/bulk-timetable.js"></script>
+</body>
+</html>

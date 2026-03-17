@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin | Course Sections</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Course Sections</h1>
+          <p class="a-desc">Manage course sections.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" id="refreshCourseSectionsBtn">Refresh</button>
+          <button class="a-btn" id="addCourseSectionBtn">+ Add Section</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <input type="text" id="courseSectionsSearch" class="a-search" placeholder="Search..." />
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Section Code</th>
+                <th>Offering</th>
+                <th>Teacher</th>
+                <th>Capacity</th>
+                <th>Mode</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="courseSectionsTableBody">
+              <tr>
+                <td colspan="6" class="a-table-empty">No data</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="a-modal" id="courseSectionModal">
+    <div class="a-modal__backdrop" id="courseSectionBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Add Course Section</h2>
+        <button class="a-modal__close" id="closeCourseSectionModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="courseSectionForm" class="a-form">
+
+          <div class="a-form-row">
+            <label>Offering Hash</label>
+            <input type="text" id="offeringHashInput" required />
+          </div>
+
+          <div class="a-form-row">
+            <label>Section Code</label>
+            <input type="text" id="sectionCodeInput" required />
+          </div>
+
+          <div class="a-form-row">
+            <label>Teacher Hash</label>
+            <input type="text" id="teacherHashInput" />
+          </div>
+
+          <div class="a-form-row">
+            <label>Capacity</label>
+            <input type="number" id="capacityInput" />
+          </div>
+
+          <div class="a-form-row">
+            <label>Mode</label>
+            <input type="text" id="modeInput" />
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelCourseSectionBtn">Cancel</button>
+            <button type="submit" class="a-btn">Save</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/course-sections.js"></script>
+</body>
+</html>
