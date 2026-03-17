@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Security</title>
+
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+
+<div class="a-layout">
+
+<div id="sidebar-container"></div>
+
+<main class="a-main">
+
+<header class="a-topbar">
+<div>
+<h1 class="a-title">Security</h1>
+<p class="a-desc">Change your password or reset another account password.</p>
+</div>
+</header>
+
+
+<section class="a-grid">
+
+<!-- CHANGE PASSWORD -->
+<article class="a-card">
+
+<div class="a-card__head">
+<h3>Change Your Password</h3>
+<span class="a-badge">Admin</span>
+</div>
+
+<form id="changePasswordForm" class="a-form">
+
+<div class="a-form-row">
+<label>Old Password</label>
+<input type="password" id="oldPasswordInput" required>
+</div>
+
+<div class="a-form-row">
+<label>New Password</label>
+<input type="password" id="newPasswordInput" required>
+</div>
+
+<div class="a-form-actions">
+<button class="a-btn" type="submit">
+Change Password
+</button>
+</div>
+
+</form>
+
+</article>
+
+
+<!-- RESET PASSWORD -->
+<article class="a-card">
+
+<div class="a-card__head">
+<h3>Admin Reset Password</h3>
+<span class="a-badge a-badge--warn">Admin Tool</span>
+</div>
+
+<form id="resetPasswordForm" class="a-form">
+
+<div class="a-form-row">
+<label>Old Password</label>
+<input type="password" id="resetOldPasswordInput" required>
+</div>
+
+<div class="a-form-row">
+<label>New Password</label>
+<input type="password" id="resetNewPasswordInput" required>
+</div>
+
+<div class="a-form-actions">
+<button class="a-btn" type="submit">
+Reset Password
+</button>
+</div>
+
+</form>
+
+</article>
+
+</section>
+
+</main>
+</div>
+
+
+<script src="../config/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/load-sidebar.js"></script>
+<script src="../assets/js/admin/security.js"></script>
+
+</body>
+</html>

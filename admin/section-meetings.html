@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Section Meetings</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Section Meetings</h1>
+          <p class="a-desc">Manage weekly meeting slots for sections.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshMeetingsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addMeetingBtn">+ Add Meeting</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap" style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input
+            type="text"
+            id="meetingSectionHashInput"
+            class="a-search"
+            placeholder="Enter course section hash"
+          />
+          <button class="a-btn" type="button" id="loadMeetingsBtn">Load Meetings</button>
+          <input
+            type="text"
+            id="meetingSearch"
+            class="a-search"
+            placeholder="Search by day, room, or meeting hash"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Meeting Hash</th>
+                <th>Day</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Room</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="meetingsTableBody">
+              <tr>
+                <td colspan="7" class="a-table-empty">Enter a section hash and load meetings.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="meetingViewModal">
+    <div class="a-modal__backdrop" id="meetingBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Meeting Details</h2>
+        <button class="a-modal__close" type="button" id="closeMeetingModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Meeting Hash</span>
+            <span class="a-detail-value" id="detailMeetingHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Day</span>
+            <span class="a-detail-value" id="detailMeetingDay">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Start Time</span>
+            <span class="a-detail-value" id="detailMeetingStart">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">End Time</span>
+            <span class="a-detail-value" id="detailMeetingEnd">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Room</span>
+            <span class="a-detail-value" id="detailMeetingRoom">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailMeetingCreatedAt">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="a-modal" id="addMeetingModal">
+    <div class="a-modal__backdrop" id="addMeetingBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Add Section Meeting</h2>
+        <button class="a-modal__close" type="button" id="closeAddMeetingBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addMeetingForm" class="a-form">
+          <div class="a-form-row">
+            <label>Section Hash</label>
+            <input type="text" id="meetingSectionHashField" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Day Of Week</label>
+            <input type="number" id="meetingDayInput" min="1" max="7" placeholder="1-7" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Start Time</label>
+            <input type="text" id="meetingStartInput" placeholder="08:00" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>End Time</label>
+            <input type="text" id="meetingEndInput" placeholder="08:45" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Room</label>
+            <input type="text" id="meetingRoomInput" placeholder="Room A">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddMeeting">Cancel</button>
+            <button type="submit" class="a-btn" id="saveMeetingBtn">Save Meeting</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/section-meetings.js"></script>
+</body>
+</html>

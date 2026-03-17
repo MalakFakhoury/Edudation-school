@@ -5,10 +5,11 @@
   grid-template-columns: 280px 1fr;
 }
 
-.a-sidebar{
-  background: rgba(255,255,255,.92);
-  border-right: 1px solid var(--border);
-  padding: 18px;
+.a-sidebar {
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
 }
 
 .a-brand{

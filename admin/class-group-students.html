@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Class Group Students</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Class Group Students</h1>
+          <p class="a-desc">View class students and assign students to class groups.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshClassGroupStudentsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="assignStudentBtn">+ Assign Student</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap" style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input
+            type="text"
+            id="classHashInput"
+            class="a-search"
+            placeholder="Enter class hash"
+          />
+
+          <button class="a-btn" type="button" id="loadClassGroupStudentsBtn">
+            Load Students
+          </button>
+
+          <input
+            type="text"
+            id="classGroupStudentsSearch"
+            class="a-search"
+            placeholder="Search by student hash, username, or name"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Student Hash</th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="classGroupStudentsTableBody">
+              <tr>
+                <td colspan="8" class="a-table-empty">Enter a class hash and load students.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="classGroupStudentViewModal">
+    <div class="a-modal__backdrop" id="classGroupStudentBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Student Details</h2>
+        <button class="a-modal__close" type="button" id="closeClassGroupStudentModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Student Hash</span>
+            <span class="a-detail-value" id="detailClassStudentHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Username</span>
+            <span class="a-detail-value" id="detailClassUsername">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">First Name</span>
+            <span class="a-detail-value" id="detailClassFirstName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Last Name</span>
+            <span class="a-detail-value" id="detailClassLastName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Email</span>
+            <span class="a-detail-value" id="detailClassEmail">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Phone</span>
+            <span class="a-detail-value" id="detailClassPhone">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailClassCreatedAt">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="a-modal" id="assignStudentModal">
+    <div class="a-modal__backdrop" id="assignStudentBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Assign Student To Class Group</h2>
+        <button class="a-modal__close" type="button" id="closeAssignStudentBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="assignStudentForm" class="a-form">
+          <div class="a-form-row">
+            <label>Student Hash</label>
+            <input type="text" id="assignStudentHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Class Hash</label>
+            <input type="text" id="assignClassHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Term Hash</label>
+            <input type="text" id="assignTermHashInput" required>
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAssignStudent">Cancel</button>
+            <button type="submit" class="a-btn" id="saveAssignStudentBtn">Assign Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/class-group-students.js"></script>
+</body>
+</html>

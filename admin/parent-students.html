@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Parent Students</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Parent Students</h1>
+          <p class="a-desc">View linked students for a parent and manage links.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshParentStudentsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addParentStudentBtn">+ Link Student</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap" style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input
+            type="text"
+            id="parentHashInput"
+            class="a-search"
+            placeholder="Enter parent hash"
+          />
+
+          <button class="a-btn" type="button" id="loadParentStudentsBtn">
+            Load Students
+          </button>
+
+          <input
+            type="text"
+            id="parentStudentsSearch"
+            class="a-search"
+            placeholder="Search by student hash, username, or name"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Link Hash</th>
+                <th>Relation</th>
+                <th>Linked At</th>
+                <th>Student Hash</th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="parentStudentsTableBody">
+              <tr>
+                <td colspan="9" class="a-table-empty">Enter a parent hash and load students.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- View Modal -->
+  <div class="a-modal" id="parentStudentViewModal">
+    <div class="a-modal__backdrop" id="parentStudentBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Linked Student Details</h2>
+        <button class="a-modal__close" type="button" id="closeParentStudentModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Link Hash</span>
+            <span class="a-detail-value" id="detailLinkHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Relation</span>
+            <span class="a-detail-value" id="detailLinkRelation">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Linked At</span>
+            <span class="a-detail-value" id="detailLinkedAt">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Student Hash</span>
+            <span class="a-detail-value" id="detailLinkedStudentHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Username</span>
+            <span class="a-detail-value" id="detailLinkedUsername">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">First Name</span>
+            <span class="a-detail-value" id="detailLinkedFirstName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Last Name</span>
+            <span class="a-detail-value" id="detailLinkedLastName">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Email</span>
+            <span class="a-detail-value" id="detailLinkedEmail">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Link Modal -->
+  <div class="a-modal" id="linkParentStudentModal">
+    <div class="a-modal__backdrop" id="linkParentStudentBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Link Parent to Student</h2>
+        <button class="a-modal__close" type="button" id="closeLinkParentStudentBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="linkParentStudentForm" class="a-form">
+          <div class="a-form-row">
+            <label>Parent Hash</label>
+            <input type="text" id="linkParentHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Student Hash</label>
+            <input type="text" id="linkStudentHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Relation</label>
+            <input type="text" id="linkRelationInput" placeholder="father / mother / guardian">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelLinkParentStudent">Cancel</button>
+            <button type="submit" class="a-btn" id="saveLinkParentStudentBtn">Save Link</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/parent-students.js"></script>
+</body>
+</html>

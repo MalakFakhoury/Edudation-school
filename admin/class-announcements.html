@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Class Announcements</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Class Announcements</h1>
+          <p class="a-desc">Create and manage class announcements.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshClassAnnouncementsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addClassAnnouncementBtn">+ Add Announcement</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap" style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input
+            type="text"
+            id="classAnnouncementClassHashInput"
+            class="a-search"
+            placeholder="Enter class hash"
+          />
+
+          <input
+            type="text"
+            id="classAnnouncementHashInput"
+            class="a-search"
+            placeholder="Enter announcement hash"
+          />
+
+          <button class="a-btn" type="button" id="loadClassAnnouncementBtn">
+            Load Announcement
+          </button>
+
+          <input
+            type="text"
+            id="classAnnouncementSearch"
+            class="a-search"
+            placeholder="Search by title or content"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Announcement Hash</th>
+                <th>Class Hash</th>
+                <th>Title</th>
+                <th>Created By Admin</th>
+                <th>Created By Teacher</th>
+                <th>Created At</th>
+                <th>Expires At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="classAnnouncementsTableBody">
+              <tr>
+                <td colspan="8" class="a-table-empty">Enter class hash and announcement hash, then load announcement.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="classAnnouncementViewModal">
+    <div class="a-modal__backdrop" id="classAnnouncementBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Class Announcement Details</h2>
+        <button class="a-modal__close" type="button" id="closeClassAnnouncementModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Announcement Hash</span>
+            <span class="a-detail-value" id="detailClassAnnouncementHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Class Hash</span>
+            <span class="a-detail-value" id="detailClassAnnouncementClassHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Title</span>
+            <span class="a-detail-value" id="detailClassAnnouncementTitle">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created By Admin</span>
+            <span class="a-detail-value" id="detailClassAnnouncementCreatedByAdmin">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created By Teacher</span>
+            <span class="a-detail-value" id="detailClassAnnouncementCreatedByTeacher">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailClassAnnouncementCreatedAt">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Updated At</span>
+            <span class="a-detail-value" id="detailClassAnnouncementUpdatedAt">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Expires At</span>
+            <span class="a-detail-value" id="detailClassAnnouncementExpiresAt">—</span>
+          </div>
+
+          <div class="a-detail-item" style="grid-column: 1 / -1;">
+            <span class="a-detail-label">Content</span>
+            <span class="a-detail-value" id="detailClassAnnouncementContent">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="a-modal" id="addClassAnnouncementModal">
+    <div class="a-modal__backdrop" id="addClassAnnouncementBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Add Class Announcement</h2>
+        <button class="a-modal__close" type="button" id="closeAddClassAnnouncementBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addClassAnnouncementForm" class="a-form">
+          <div class="a-form-row">
+            <label>Course Section Hash</label>
+            <input type="text" id="classAnnouncementCourseSectionHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Class Hash</label>
+            <input type="text" id="classAnnouncementClassHashField" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Section Hash</label>
+            <input type="text" id="classAnnouncementSectionHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Title</label>
+            <input type="text" id="classAnnouncementTitleInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Content</label>
+            <textarea id="classAnnouncementContentInput" rows="5" placeholder="Enter announcement content"></textarea>
+          </div>
+
+          <div class="a-form-row">
+            <label>Expires At</label>
+            <input type="text" id="classAnnouncementExpiresInput" placeholder="YYYY-MM-DD">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddClassAnnouncement">Cancel</button>
+            <button type="submit" class="a-btn" id="saveClassAnnouncementBtn">Save Announcement</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/class-announcements.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Course Offerings</title>
+
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="a-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="a-main">
+      <header class="a-topbar">
+        <div>
+          <h1 class="a-title">Course Offerings</h1>
+          <p class="a-desc">Manage offered courses by term.</p>
+        </div>
+
+        <div class="a-actions">
+          <button class="a-btn a-btn--ghost" type="button" id="refreshOfferingsBtn">Refresh</button>
+          <button class="a-btn" type="button" id="addOfferingBtn">+ Add Offering</button>
+        </div>
+      </header>
+
+      <section class="a-page-tools">
+        <div class="a-search-wrap">
+          <input
+            type="text"
+            id="offeringSearch"
+            class="a-search"
+            placeholder="Search by offering hash, course hash, title, or status"
+          />
+        </div>
+      </section>
+
+      <section class="a-table-card">
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Offering Hash</th>
+                <th>Term Hash</th>
+                <th>Course Hash</th>
+                <th>Course Code</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Status</th>
+                <th>Sections Count</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="offeringsTableBody">
+              <tr>
+                <td colspan="10" class="a-table-empty">Loading offerings...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="a-modal" id="offeringViewModal">
+    <div class="a-modal__backdrop" id="offeringBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Offering Details</h2>
+        <button class="a-modal__close" type="button" id="closeOfferingModalBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <div class="a-detail-grid">
+          <div class="a-detail-item">
+            <span class="a-detail-label">Offering Hash</span>
+            <span class="a-detail-value" id="detailOfferingHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Term Hash</span>
+            <span class="a-detail-value" id="detailOfferingTermHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Course Hash</span>
+            <span class="a-detail-value" id="detailOfferingCourseHash">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Course Code</span>
+            <span class="a-detail-value" id="detailOfferingCourseCode">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Title</span>
+            <span class="a-detail-value" id="detailOfferingTitle">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Credits</span>
+            <span class="a-detail-value" id="detailOfferingCredits">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Status</span>
+            <span class="a-detail-value" id="detailOfferingStatus">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Sections Count</span>
+            <span class="a-detail-value" id="detailOfferingSectionsCount">—</span>
+          </div>
+
+          <div class="a-detail-item">
+            <span class="a-detail-label">Created At</span>
+            <span class="a-detail-value" id="detailOfferingCreatedAt">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="a-modal" id="addOfferingModal">
+    <div class="a-modal__backdrop" id="addOfferingBackdrop"></div>
+
+    <div class="a-modal__content">
+      <div class="a-modal__header">
+        <h2>Add Course Offering</h2>
+        <button class="a-modal__close" type="button" id="closeAddOfferingBtn">×</button>
+      </div>
+
+      <div class="a-modal__body">
+        <form id="addOfferingForm" class="a-form">
+          <div class="a-form-row">
+            <label>Term Hash</label>
+            <input type="text" id="offeringTermHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Course Hash</label>
+            <input type="text" id="offeringCourseHashInput" required>
+          </div>
+
+          <div class="a-form-row">
+            <label>Status</label>
+            <input type="text" id="offeringStatusInput" placeholder="active">
+          </div>
+
+          <div class="a-form-actions">
+            <button type="button" class="a-btn a-btn--ghost" id="cancelAddOffering">Cancel</button>
+            <button type="submit" class="a-btn" id="saveOfferingBtn">Save Offering</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/load-sidebar.js"></script>
+  <script src="../assets/js/admin/course-offerings.js"></script>
+</body>
+</html>
