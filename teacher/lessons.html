@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher | Lessons</title>
+
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./teacher.css" />
 </head>
@@ -14,6 +15,7 @@
         <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
         <span>eSchool</span>
       </div>
+
       <div class="t-profile">
         <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" />
         <div class="t-profile__meta">
@@ -21,6 +23,7 @@
           <div class="t-sub">Teacher Panel</div>
         </div>
       </div>
+
       <nav class="t-nav">
         <a class="t-nav__item" href="./teachers.html">My Sections</a>
         <a class="t-nav__item" href="./timetable.html">Timetable</a>
@@ -32,6 +35,7 @@
         <a class="t-nav__item" href="./announcements.html">Announcements</a>
         <a class="t-nav__item" href="./analytics.html">Analytics</a>
         <a class="t-nav__item" href="./section-students.html">Section Students</a>
+
         <div class="t-nav__sep"></div>
         <a class="t-nav__item" href="../login/index.html">Logout</a>
       </nav>
@@ -41,23 +45,81 @@
       <header class="t-topbar">
         <div>
           <h1 class="t-title">Lessons</h1>
-          <p class="t-desc">Create and manage lessons for your sections.</p>
+          <p class="t-desc">Create and manage lessons for your selected course section.</p>
         </div>
+
         <div>
-          <button class="t-btn" type="button" id="createLessonBtn">+ New Lesson</button>
+          <button class="t-btn" type="button" id="openCreateLessonModalBtn">+ New Lesson</button>
         </div>
       </header>
 
-      <section class="t-grid">
-        <article class="t-card">
+      <section class="t-tools-row">
+        <input
+          type="text"
+          id="courseSectionHashInput"
+          class="t-input"
+          placeholder="Enter course section hash"
+        />
+        <button class="t-btn t-btn--ghost" type="button" id="loadLessonsBtn">Load Lessons</button>
+      </section>
+
+      <section class="t-info-row">
+        <p class="t-muted" id="selectedCourseSectionLabel">Selected course section: Unknown</p>
+      </section>
+
+      <section class="t-grid" id="lessonsGrid">
+        <article class="t-card t-card--empty">
           <div class="t-card__body">
-            <div class="t-card__meta">Math - Section A</div>
-            <h3 class="t-card__title">Algebra Basics</h3>
-            <p class="t-muted">Introduction lesson for equations.</p>
+            <div class="t-card__meta">Info</div>
+            <h3 class="t-card__title">Load lessons</h3>
+            <p class="t-muted">Enter a course section hash to load lessons.</p>
           </div>
         </article>
       </section>
     </main>
+  </div>
+
+  <!-- MODAL -->
+  <div id="lessonModal" class="t-modal">
+    <div class="t-modal__backdrop" id="lessonModalBackdrop"></div>
+
+    <div class="t-modal__content">
+      <div class="t-modal__header">
+        <h3 id="lessonModalTitle">Create Lesson</h3>
+        <button type="button" class="t-modal__close" id="closeLessonModalBtn">×</button>
+      </div>
+
+      <div class="t-modal__body">
+        <form id="lessonForm" class="t-form">
+          <input type="hidden" id="lessonHashInput" />
+
+          <div class="t-form-row">
+            <label for="lessonSectionHashInput">Section Hash</label>
+            <input type="text" id="lessonSectionHashInput" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="lessonTitleInput">Title</label>
+            <input type="text" id="lessonTitleInput" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="lessonContentTextInput">Content Text</label>
+            <textarea id="lessonContentTextInput" class="t-textarea" placeholder="Enter lesson content"></textarea>
+          </div>
+
+          <div class="t-form-row">
+            <label for="lessonContentUrlInput">Content URL</label>
+            <input type="text" id="lessonContentUrlInput" class="t-input" placeholder="https://..." />
+          </div>
+
+          <div class="t-form-actions">
+            <button type="button" class="t-btn t-btn--ghost" id="cancelLessonModalBtn">Cancel</button>
+            <button type="submit" class="t-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script src="../config/config.js"></script>

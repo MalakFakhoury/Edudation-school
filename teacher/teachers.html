@@ -10,6 +10,7 @@
 </head>
 <body>
   <div class="t-layout">
+    <!-- SIDEBAR -->
     <aside class="t-sidebar">
       <div class="t-brand">
         <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
@@ -41,7 +42,9 @@
       </nav>
     </aside>
 
+    <!-- MAIN -->
     <main class="t-main">
+      <!-- TOP BAR -->
       <header class="t-topbar">
         <div class="t-topbar__left">
           <h1 class="t-title">My Sections</h1>
@@ -54,12 +57,34 @@
         </div>
       </header>
 
+      <!-- TERM HASH TOOLS -->
+      <section style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <input
+          type="text"
+          id="termHashInput"
+          placeholder="Enter term hash"
+          style="
+            height: 38px;
+            min-width: 240px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            color: var(--text);
+            outline: none;
+          "
+        />
+        <button class="t-btn t-btn--ghost" type="button" id="loadSectionsBtn">Load Sections</button>
+      </section>
+
+      <!-- TABS -->
       <div class="t-tabs">
         <button class="t-tab active" type="button">Active</button>
         <button class="t-tab" type="button">Upcoming</button>
         <button class="t-tab" type="button">Archived</button>
       </div>
 
+      <!-- GRID CARDS -->
       <section class="t-grid">
         <article class="t-card">
           <div class="t-card__thumb"></div>
