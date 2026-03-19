@@ -3,51 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Teacher | Dashboard</title>
+  <title>Teacher | My Sections</title>
 
   <link rel="stylesheet" href="../assets/css/main.css" />
-  <link rel="stylesheet" href="./teacher.css">
+  <link rel="stylesheet" href="./teacher.css" />
 </head>
 <body>
   <div class="t-layout">
-    <!-- SIDEBAR -->
     <aside class="t-sidebar">
+      <div class="t-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
+        <span>eSchool</span>
+      </div>
 
-  <!-- BRAND -->
-  <div class="t-brand">
-    <img src="../assets/Images/logo-education.jpeg" alt="Logo">
-    <span>eSchool</span>
-  </div>
+      <div class="t-profile">
+        <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" />
+        <div class="t-profile__meta">
+          <div class="t-name">Teacher Name</div>
+          <div class="t-sub">Teacher Panel</div>
+        </div>
+      </div>
 
-  <!-- PROFILE -->
-  <div class="t-profile">
-    <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile">
-    <div class="t-profile__meta">
-      <div class="t-name">Teacher Name</div>
-      <div class="t-sub">Teacher Panel</div>
-    </div>
-  </div>
+      <nav class="t-nav">
+        <a class="t-nav__item" href="./teachers.html">My Sections</a>
+        <a class="t-nav__item" href="./timetable.html">Timetable</a>
+        <a class="t-nav__item" href="./lessons.html">Lessons</a>
+        <a class="t-nav__item" href="./resources.html">Resources</a>
+        <a class="t-nav__item" href="./assignments.html">Assignments</a>
+        <a class="t-nav__item" href="./quizzes.html">Quizzes</a>
+        <a class="t-nav__item" href="./attendance.html">Attendance</a>
+        <a class="t-nav__item" href="./announcements.html">Announcements</a>
+        <a class="t-nav__item" href="./analytics.html">Analytics</a>
+        <a class="t-nav__item" href="./section-students.html">Section Students</a>
 
-  <nav class="t-nav">
-    <a class="t-nav__item active" href="./index.html">My Sections</a>
-    <a class="t-nav__item" href="./timetable.html">Timetable</a>
-    <a class="t-nav__item" href="./lessons.html">Lessons</a>
-    <a class="t-nav__item" href="./resources.html">Resources</a>
-    <a class="t-nav__item" href="./assignments.html">Assignments</a>
-    <a class="t-nav__item" href="./quizzes.html">Quizzes</a>
-    <a class="t-nav__item" href="./attendance.html">Attendance</a>
-    <a class="t-nav__item" href="./announcements.html">Announcements</a>
-    <a class="t-nav__item" href="./analytics.html">Analytics</a>
+        <div class="t-nav__sep"></div>
+        <a class="t-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
 
-    <div class="t-nav__sep"></div>
-    <a class="t-nav__item" href="../login/index.html">Logout</a>
-  </nav>
-
-</aside>
-
-    <!-- MAIN -->
     <main class="t-main">
-      <!-- TOP BAR -->
       <header class="t-topbar">
         <div class="t-topbar__left">
           <h1 class="t-title">My Sections</h1>
@@ -60,16 +54,13 @@
         </div>
       </header>
 
-      <!-- TABS -->
       <div class="t-tabs">
         <button class="t-tab active" type="button">Active</button>
         <button class="t-tab" type="button">Upcoming</button>
         <button class="t-tab" type="button">Archived</button>
       </div>
 
-      <!-- GRID CARDS (Sections) -->
       <section class="t-grid">
-        <!-- Card -->
         <article class="t-card">
           <div class="t-card__thumb"></div>
           <div class="t-card__body">
@@ -113,22 +104,18 @@
             <div class="t-card__meta">Quick action</div>
             <h3 class="t-card__title">Create a lesson / assignment</h3>
             <p class="t-muted">Start by selecting a section, then add activities.</p>
-            <button class="t-btn t-btn--small" type="button">+ Create</button>
+            <button class="t-btn t-btn--small" type="button" id="quickCreateBtn">+ Create</button>
           </div>
         </article>
       </section>
     </main>
   </div>
 
-  <script>
-    document.getElementById("btnCreate").addEventListener("click", () => {
-      alert("Next: open Create menu (Lesson / Assignment / Quiz / Announcement).");
-    });
-  </script>
-<script src="../config/config.js"></script>
-<script src="../assets/js/api.js"></script>
-<script src="../assets/js/storage.js"></script>
-<script src="../assets/js/utils.js"></script>
-<script src="./teacher.js"></script>
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/teacher/teacher.js"></script>
+  <script src="../assets/js/teacher/index.js"></script>
 </body>
 </html>

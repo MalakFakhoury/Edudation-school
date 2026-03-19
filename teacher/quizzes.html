@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher | Quizzes</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="./teacher.css" />
+</head>
+<body>
+  <div class="t-layout">
+    <aside class="t-sidebar">
+      <div class="t-brand"><img src="../assets/Images/logo-education.jpeg" alt="Logo" /><span>eSchool</span></div>
+      <div class="t-profile"><img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" /><div class="t-profile__meta"><div class="t-name">Teacher Name</div><div class="t-sub">Teacher Panel</div></div></div>
+      <nav class="t-nav">
+        <a class="t-nav__item" href="./teachers.html">My Sections</a>
+        <a class="t-nav__item" href="./timetable.html">Timetable</a>
+        <a class="t-nav__item" href="./lessons.html">Lessons</a>
+        <a class="t-nav__item" href="./resources.html">Resources</a>
+        <a class="t-nav__item" href="./assignments.html">Assignments</a>
+        <a class="t-nav__item" href="./quizzes.html">Quizzes</a>
+        <a class="t-nav__item" href="./attendance.html">Attendance</a>
+        <a class="t-nav__item" href="./announcements.html">Announcements</a>
+        <a class="t-nav__item" href="./analytics.html">Analytics</a>
+        <a class="t-nav__item" href="./section-students.html">Section Students</a>
+        <div class="t-nav__sep"></div>
+        <a class="t-nav__item" href="../login/index.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="t-main">
+      <header class="t-topbar">
+        <div>
+          <h1 class="t-title">Quizzes</h1>
+          <p class="t-desc">Create and review quizzes.</p>
+        </div>
+      </header>
+
+      <section class="t-grid">
+        <article class="t-card">
+          <div class="t-card__body">
+            <div class="t-card__meta">Math - Section A</div>
+            <h3 class="t-card__title">Quiz 1</h3>
+            <p class="t-muted">Average score: 81%</p>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="../config/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/teacher/teacher.js"></script>
+  <script src="../assets/js/teacher/quizzes.js"></script>
+</body>
+</html>
