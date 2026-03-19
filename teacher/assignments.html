@@ -4,14 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher | Assignments</title>
+
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./teacher.css" />
 </head>
 <body>
   <div class="t-layout">
     <aside class="t-sidebar">
-      <div class="t-brand"><img src="../assets/Images/logo-education.jpeg" alt="Logo" /><span>eSchool</span></div>
-      <div class="t-profile"><img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" /><div class="t-profile__meta"><div class="t-name">Teacher Name</div><div class="t-sub">Teacher Panel</div></div></div>
+      <div class="t-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
+        <span>eSchool</span>
+      </div>
+
+      <div class="t-profile">
+        <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" />
+        <div class="t-profile__meta">
+          <div class="t-name">Teacher Name</div>
+          <div class="t-sub">Teacher Panel</div>
+        </div>
+      </div>
+
       <nav class="t-nav">
         <a class="t-nav__item" href="./teachers.html">My Sections</a>
         <a class="t-nav__item" href="./timetable.html">Timetable</a>
@@ -23,6 +35,7 @@
         <a class="t-nav__item" href="./announcements.html">Announcements</a>
         <a class="t-nav__item" href="./analytics.html">Analytics</a>
         <a class="t-nav__item" href="./section-students.html">Section Students</a>
+
         <div class="t-nav__sep"></div>
         <a class="t-nav__item" href="../login/index.html">Logout</a>
       </nav>
@@ -32,20 +45,107 @@
       <header class="t-topbar">
         <div>
           <h1 class="t-title">Assignments</h1>
-          <p class="t-desc">Create and track student assignments.</p>
+          <p class="t-desc">Create and manage assignments for your selected course section.</p>
+        </div>
+
+        <div>
+          <button class="t-btn" type="button" id="openCreateAssignmentModalBtn">+ New Assignment</button>
         </div>
       </header>
 
-      <section class="t-grid">
-        <article class="t-card">
+      <section class="t-tools-row">
+        <input
+          type="text"
+          id="assignmentCourseSectionHashInput"
+          class="t-input"
+          placeholder="Enter course section hash"
+        />
+        <button class="t-btn t-btn--ghost" type="button" id="loadAssignmentsBtn">Load Assignments</button>
+      </section>
+
+      <section class="t-info-row">
+        <p class="t-muted" id="selectedAssignmentCourseSectionLabel">
+          Selected course section: Unknown
+        </p>
+      </section>
+
+      <section class="t-grid" id="assignmentsGrid">
+        <article class="t-card t-card--empty">
           <div class="t-card__body">
-            <div class="t-card__meta">Due: 2026-03-25</div>
-            <h3 class="t-card__title">Homework 1</h3>
-            <p class="t-muted">Submitted by 18 students.</p>
+            <div class="t-card__meta">Info</div>
+            <h3 class="t-card__title">Load assignments</h3>
+            <p class="t-muted">Enter a course section hash to load assignments.</p>
           </div>
         </article>
       </section>
     </main>
+  </div>
+
+  <!-- CREATE / EDIT ASSIGNMENT MODAL -->
+  <div id="assignmentModal" class="t-modal">
+    <div class="t-modal__backdrop" id="assignmentModalBackdrop"></div>
+
+    <div class="t-modal__content">
+      <div class="t-modal__header">
+        <h3 id="assignmentModalTitle">Create Assignment</h3>
+        <button type="button" class="t-modal__close" id="closeAssignmentModalBtn">×</button>
+      </div>
+
+      <div class="t-modal__body">
+        <form id="assignmentForm" class="t-form">
+          <input type="hidden" id="assignmentHashInput" />
+
+          <div class="t-form-row">
+            <label for="assignmentSectionHashField">Course Section Hash</label>
+            <input type="text" id="assignmentSectionHashField" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="assignmentTitleInput">Title</label>
+            <input type="text" id="assignmentTitleInput" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="assignmentDescriptionInput">Description</label>
+            <textarea id="assignmentDescriptionInput" class="t-textarea" placeholder="Enter assignment description"></textarea>
+          </div>
+
+          <div class="t-form-row">
+            <label for="assignmentDueDateInput">Due Date</label>
+            <input type="text" id="assignmentDueDateInput" class="t-input" placeholder="YYYY-MM-DD or datetime" />
+          </div>
+
+          <div class="t-form-actions">
+            <button type="button" class="t-btn t-btn--ghost" id="cancelAssignmentModalBtn">Cancel</button>
+            <button type="submit" class="t-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMISSIONS MODAL -->
+  <div id="submissionsModal" class="t-modal">
+    <div class="t-modal__backdrop" id="submissionsModalBackdrop"></div>
+
+    <div class="t-modal__content">
+      <div class="t-modal__header">
+        <h3 id="submissionsModalTitle">Assignment Submissions</h3>
+        <button type="button" class="t-modal__close" id="closeSubmissionsModalBtn">×</button>
+      </div>
+
+      <div class="t-modal__body">
+        <div id="submissionsGrid" class="t-grid">
+          <article class="t-card t-card--empty">
+            <div class="t-card__body">
+              <div class="t-card__meta">Info</div>
+              <h3 class="t-card__title">No submissions loaded</h3>
+              <p class="t-muted">Open an assignment first.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="../config/config.js"></script>
