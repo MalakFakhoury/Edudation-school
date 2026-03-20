@@ -4,14 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher | Quizzes</title>
+
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./teacher.css" />
 </head>
 <body>
   <div class="t-layout">
     <aside class="t-sidebar">
-      <div class="t-brand"><img src="../assets/Images/logo-education.jpeg" alt="Logo" /><span>eSchool</span></div>
-      <div class="t-profile"><img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" /><div class="t-profile__meta"><div class="t-name">Teacher Name</div><div class="t-sub">Teacher Panel</div></div></div>
+      <div class="t-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
+        <span>eSchool</span>
+      </div>
+
+      <div class="t-profile">
+        <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" />
+        <div class="t-profile__meta">
+          <div class="t-name">Teacher Name</div>
+          <div class="t-sub">Teacher Panel</div>
+        </div>
+      </div>
+
       <nav class="t-nav">
         <a class="t-nav__item" href="./teachers.html">My Sections</a>
         <a class="t-nav__item" href="./timetable.html">Timetable</a>
@@ -23,6 +35,7 @@
         <a class="t-nav__item" href="./announcements.html">Announcements</a>
         <a class="t-nav__item" href="./analytics.html">Analytics</a>
         <a class="t-nav__item" href="./section-students.html">Section Students</a>
+
         <div class="t-nav__sep"></div>
         <a class="t-nav__item" href="../login/index.html">Logout</a>
       </nav>
@@ -32,20 +45,106 @@
       <header class="t-topbar">
         <div>
           <h1 class="t-title">Quizzes</h1>
-          <p class="t-desc">Create and review quizzes.</p>
+          <p class="t-desc">Create and manage quizzes for your selected course section.</p>
+        </div>
+
+        <div>
+          <button class="t-btn" type="button" id="openCreateQuizModalBtn">+ New Quiz</button>
         </div>
       </header>
 
-      <section class="t-grid">
-        <article class="t-card">
+      <section class="t-tools-row">
+        <input
+          type="text"
+          id="quizCourseSectionHashInput"
+          class="t-input"
+          placeholder="Enter course section hash"
+        />
+      </section>
+
+      <section class="t-info-row">
+        <p class="t-muted" id="selectedQuizCourseSectionLabel">
+          Selected course section: Unknown
+        </p>
+      </section>
+
+      <section class="t-grid" id="quizzesGrid">
+        <article class="t-card t-card--empty">
           <div class="t-card__body">
-            <div class="t-card__meta">Math - Section A</div>
-            <h3 class="t-card__title">Quiz 1</h3>
-            <p class="t-muted">Average score: 81%</p>
+            <div class="t-card__meta">Info</div>
+            <h3 class="t-card__title">No quizzes yet</h3>
+            <p class="t-muted">Create a quiz to see it here.</p>
           </div>
         </article>
       </section>
     </main>
+  </div>
+
+  <!-- CREATE / EDIT QUIZ MODAL -->
+  <div id="quizModal" class="t-modal">
+    <div class="t-modal__backdrop" id="quizModalBackdrop"></div>
+
+    <div class="t-modal__content">
+      <div class="t-modal__header">
+        <h3 id="quizModalTitle">Create Quiz</h3>
+        <button type="button" class="t-modal__close" id="closeQuizModalBtn">×</button>
+      </div>
+
+      <div class="t-modal__body">
+        <form id="quizForm" class="t-form">
+          <input type="hidden" id="quizHashInput" />
+
+          <div class="t-form-row">
+            <label for="quizSectionHashField">Course Section Hash</label>
+            <input type="text" id="quizSectionHashField" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="quizTitleInput">Title</label>
+            <input type="text" id="quizTitleInput" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="quizDescriptionInput">Description</label>
+            <textarea id="quizDescriptionInput" class="t-textarea" placeholder="Enter quiz description"></textarea>
+          </div>
+
+          <div class="t-form-row">
+            <label for="quizTotalMarksInput">Total Marks</label>
+            <input type="number" step="0.01" id="quizTotalMarksInput" class="t-input" placeholder="e.g. 20" />
+          </div>
+
+          <div class="t-form-actions">
+            <button type="button" class="t-btn t-btn--ghost" id="cancelQuizModalBtn">Cancel</button>
+            <button type="submit" class="t-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ RESULTS MODAL -->
+  <div id="quizResultsModal" class="t-modal">
+    <div class="t-modal__backdrop" id="quizResultsModalBackdrop"></div>
+
+    <div class="t-modal__content">
+      <div class="t-modal__header">
+        <h3 id="quizResultsModalTitle">Quiz Results</h3>
+        <button type="button" class="t-modal__close" id="closeQuizResultsModalBtn">×</button>
+      </div>
+
+      <div class="t-modal__body">
+        <div id="quizResultsGrid" class="t-grid">
+          <article class="t-card t-card--empty">
+            <div class="t-card__body">
+              <div class="t-card__meta">Info</div>
+              <h3 class="t-card__title">No results loaded</h3>
+              <p class="t-muted">Open a quiz first.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="../config/config.js"></script>

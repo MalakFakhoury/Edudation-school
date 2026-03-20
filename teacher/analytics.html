@@ -4,14 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher | Analytics</title>
+
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./teacher.css" />
 </head>
 <body>
   <div class="t-layout">
     <aside class="t-sidebar">
-      <div class="t-brand"><img src="../assets/Images/logo-education.jpeg" alt="Logo" /><span>eSchool</span></div>
-      <div class="t-profile"><img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" /><div class="t-profile__meta"><div class="t-name">Teacher Name</div><div class="t-sub">Teacher Panel</div></div></div>
+      <div class="t-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
+        <span>eSchool</span>
+      </div>
+
+      <div class="t-profile">
+        <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" />
+        <div class="t-profile__meta">
+          <div class="t-name">Teacher Name</div>
+          <div class="t-sub">Teacher Panel</div>
+        </div>
+      </div>
+
       <nav class="t-nav">
         <a class="t-nav__item" href="./teachers.html">My Sections</a>
         <a class="t-nav__item" href="./timetable.html">Timetable</a>
@@ -23,6 +35,7 @@
         <a class="t-nav__item" href="./announcements.html">Announcements</a>
         <a class="t-nav__item" href="./analytics.html">Analytics</a>
         <a class="t-nav__item" href="./section-students.html">Section Students</a>
+
         <div class="t-nav__sep"></div>
         <a class="t-nav__item" href="../login/index.html">Logout</a>
       </nav>
@@ -32,18 +45,101 @@
       <header class="t-topbar">
         <div>
           <h1 class="t-title">Analytics</h1>
-          <p class="t-desc">Track student performance and activity stats.</p>
+          <p class="t-desc">Track student progress, assignment stats, and quiz analysis.</p>
         </div>
       </header>
 
-      <section class="t-grid">
-        <article class="t-card">
-          <div class="t-card__body">
-            <div class="t-card__meta">Assignments</div>
-            <h3 class="t-card__title">Completion Rate</h3>
-            <p class="t-muted">82%</p>
-          </div>
-        </article>
+      <!-- STUDENT PROGRESS -->
+      <section class="t-analytics-section">
+        <div class="t-section-head">
+          <h2 class="t-section-title">Student Progress</h2>
+        </div>
+
+        <div class="t-tools-row">
+          <input
+            type="text"
+            id="studentHashInput"
+            class="t-input"
+            placeholder="Enter student hash"
+          />
+          <button class="t-btn t-btn--ghost" type="button" id="loadStudentProgressBtn">
+            Load Progress
+          </button>
+        </div>
+
+        <div class="t-grid" id="studentProgressGrid">
+          <article class="t-card t-card--empty">
+            <div class="t-card__body">
+              <div class="t-card__meta">Info</div>
+              <h3 class="t-card__title">No progress loaded</h3>
+              <p class="t-muted">Enter a student hash to load progress.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ASSIGNMENT STATS -->
+      <section class="t-analytics-section">
+        <div class="t-section-head">
+          <h2 class="t-section-title">Assignment Stats</h2>
+        </div>
+
+        <div class="t-tools-row">
+          <input
+            type="text"
+            id="assignmentHashStatsInput"
+            class="t-input"
+            placeholder="Enter assignment hash"
+          />
+          <input
+            type="text"
+            id="assignmentCourseSectionHashStatsInput"
+            class="t-input"
+            placeholder="Enter course section hash"
+          />
+          <button class="t-btn t-btn--ghost" type="button" id="loadAssignmentStatsBtn">
+            Load Assignment Stats
+          </button>
+        </div>
+
+        <div class="t-grid" id="assignmentStatsGrid">
+          <article class="t-card t-card--empty">
+            <div class="t-card__body">
+              <div class="t-card__meta">Info</div>
+              <h3 class="t-card__title">No assignment stats loaded</h3>
+              <p class="t-muted">Enter assignment hash and course section hash.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- QUIZ ANALYSIS -->
+      <section class="t-analytics-section">
+        <div class="t-section-head">
+          <h2 class="t-section-title">Quiz Analysis</h2>
+        </div>
+
+        <div class="t-tools-row">
+          <input
+            type="text"
+            id="quizHashInput"
+            class="t-input"
+            placeholder="Enter quiz hash"
+          />
+          <button class="t-btn t-btn--ghost" type="button" id="loadQuizAnalysisBtn">
+            Load Quiz Analysis
+          </button>
+        </div>
+
+        <div class="t-grid" id="quizAnalysisGrid">
+          <article class="t-card t-card--empty">
+            <div class="t-card__body">
+              <div class="t-card__meta">Info</div>
+              <h3 class="t-card__title">No quiz analysis loaded</h3>
+              <p class="t-muted">Enter a quiz hash to load analysis.</p>
+            </div>
+          </article>
+        </div>
       </section>
     </main>
   </div>

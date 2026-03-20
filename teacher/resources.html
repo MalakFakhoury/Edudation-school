@@ -4,14 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher | Resources</title>
+
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="./teacher.css" />
 </head>
 <body>
   <div class="t-layout">
     <aside class="t-sidebar">
-      <div class="t-brand"><img src="../assets/Images/logo-education.jpeg" alt="Logo" /><span>eSchool</span></div>
-      <div class="t-profile"><img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" /><div class="t-profile__meta"><div class="t-name">Teacher Name</div><div class="t-sub">Teacher Panel</div></div></div>
+      <div class="t-brand">
+        <img src="../assets/Images/logo-education.jpeg" alt="Logo" />
+        <span>eSchool</span>
+      </div>
+
+      <div class="t-profile">
+        <img class="t-avatar-img" src="../assets/Images/default_profile.avif" alt="Profile" />
+        <div class="t-profile__meta">
+          <div class="t-name">Teacher Name</div>
+          <div class="t-sub">Teacher Panel</div>
+        </div>
+      </div>
+
       <nav class="t-nav">
         <a class="t-nav__item" href="./teachers.html">My Sections</a>
         <a class="t-nav__item" href="./timetable.html">Timetable</a>
@@ -23,6 +35,7 @@
         <a class="t-nav__item" href="./announcements.html">Announcements</a>
         <a class="t-nav__item" href="./analytics.html">Analytics</a>
         <a class="t-nav__item" href="./section-students.html">Section Students</a>
+
         <div class="t-nav__sep"></div>
         <a class="t-nav__item" href="../login/index.html">Logout</a>
       </nav>
@@ -32,20 +45,75 @@
       <header class="t-topbar">
         <div>
           <h1 class="t-title">Resources</h1>
-          <p class="t-desc">Upload and manage course resources.</p>
+          <p class="t-desc">Upload and manage course resources for your selected section.</p>
+        </div>
+
+        <div>
+          <button class="t-btn" type="button" id="openCreateResourceModalBtn">+ New Resource</button>
         </div>
       </header>
 
-      <section class="t-grid">
-        <article class="t-card">
+      <section class="t-tools-row">
+        <input
+          type="text"
+          id="resourceCourseSectionHashInput"
+          class="t-input"
+          placeholder="Enter course section hash"
+        />
+      </section>
+
+      <section class="t-info-row">
+        <p class="t-muted" id="selectedResourceCourseSectionLabel">
+          Selected course section: Unknown
+        </p>
+      </section>
+
+      <section class="t-grid" id="resourcesGrid">
+        <article class="t-card t-card--empty">
           <div class="t-card__body">
-            <div class="t-card__meta">PDF Resource</div>
-            <h3 class="t-card__title">Chapter 1 Notes</h3>
-            <p class="t-muted">Shared with Math - Section A.</p>
+            <div class="t-card__meta">Info</div>
+            <h3 class="t-card__title">No resources yet</h3>
+            <p class="t-muted">Create a resource to see it here.</p>
           </div>
         </article>
       </section>
     </main>
+  </div>
+
+  <!-- RESOURCE MODAL -->
+  <div id="resourceModal" class="t-modal">
+    <div class="t-modal__backdrop" id="resourceModalBackdrop"></div>
+
+    <div class="t-modal__content">
+      <div class="t-modal__header">
+        <h3>Create Resource</h3>
+        <button type="button" class="t-modal__close" id="closeResourceModalBtn">×</button>
+      </div>
+
+      <div class="t-modal__body">
+        <form id="resourceForm" class="t-form">
+          <div class="t-form-row">
+            <label for="resourceTitleInput">Title</label>
+            <input type="text" id="resourceTitleInput" class="t-input" required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="resourceFileUrlInput">File URL</label>
+            <input type="text" id="resourceFileUrlInput" class="t-input" placeholder="https://..." required />
+          </div>
+
+          <div class="t-form-row">
+            <label for="resourceSectionHashField">Course Section Hash</label>
+            <input type="text" id="resourceSectionHashField" class="t-input" required />
+          </div>
+
+          <div class="t-form-actions">
+            <button type="button" class="t-btn t-btn--ghost" id="cancelResourceModalBtn">Cancel</button>
+            <button type="submit" class="t-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script src="../config/config.js"></script>
