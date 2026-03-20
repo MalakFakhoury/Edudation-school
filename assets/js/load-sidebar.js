@@ -15,3 +15,11 @@
   .catch(error => {
     console.error("Error loading sidebar:", error);
   });
+
+  const links = document.querySelectorAll(".t-nav__item");
+
+links.forEach(link => {
+  if (link.href === window.location.href) {
+    link.classList.add("active");
+  }
+});
