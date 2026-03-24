@@ -67,3 +67,30 @@ function initTeacherBase() {
 }
 
 document.addEventListener("DOMContentLoaded", initTeacherBase);
+
+async function loadTeacherSidebar() {
+  const container = document.getElementById("teacher-sidebar-container");
+  if (!container) return;
+
+  try {
+    const response = await fetch("../teacher/sidebar.html");
+    const html = await response.text();
+    container.innerHTML = html;
+
+    setActiveSidebarLink();
+  } catch (error) {
+    console.error("Failed to load sidebar:", error);
+  }
+}
+
+function setActiveSidebarLink() {
+  const links = document.querySelectorAll(".t-nav__item");
+
+  links.forEach(link => {
+    if (link.href === window.location.href) {
+      link.classList.add("active");
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", loadTeacherSidebar);
